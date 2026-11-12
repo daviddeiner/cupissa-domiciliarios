@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#11101b"><meta name="description" content="Portal independiente para entregas asignadas de CUPISSA">
+<title>CUPISSA · Domiciliarios</title><link rel="stylesheet" href="assets/style.css?v=20261112b">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml"><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="assets/icon-192.png">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script defer src="assets/config.js"></script><script defer src="assets/app.js?v=20261112b"></script>
+</head><body>
+<div id="login-screen" class="login-screen">
+ <div class="login-card"><div class="brand-mark">C<span>•</span></div><p class="eyebrow">CUPISSA · LOGÍSTICA</p><h1>Portal de domicilios</h1><p class="hint">Acceso exclusivo para repartidores autorizados.</p>
+  <form id="login-form"><label>Teléfono celular<input name="phone" inputmode="tel" autocomplete="username" type="tel" required placeholder="300 123 4567"></label>
+   <label>Contraseña<input name="password" type="password" autocomplete="current-password" minlength="10" required placeholder="Tu contraseña de acceso"></label>
+   <button class="primary wide" id="login-button" type="submit">Entrar a mis domicilios</button></form>
+  <p id="login-error" class="message" role="alert" hidden></p><button type="button" id="install-button-login" class="install-login">Instalar aplicación en este celular</button><p class="login-help">Tu usuario y contraseña son asignados por CUPISSA. No se puede acceder al panel administrativo desde este portal.</p>
+ </div>
+</div>
+<div id="app-screen" hidden>
+ <header class="app-header"><div class="brand-header"><div class="brand-icon">C<span>•</span></div><div><strong>CUPISSA</strong><small>Mis domicilios</small></div></div><div class="header-actions"><button type="button" id="install-button" class="install-app" hidden>Instalar app</button><button type="button" id="logout-button" aria-label="Cerrar sesión" class="ghost">Salir</button></div></header>
+ <main><section class="welcome"><p class="eyebrow">MI RUTA DE HOY</p><h1 id="driver-name">Mis entregas</h1><p>Pedidos asignados y comprobantes de entrega.</p><div class="metric"><div><strong id="pending-count">—</strong><small>En camino</small></div><div><strong id="delivered-count">—</strong><small>Entregados</small></div></div></section>
+ <div class="toolbar"><h2>Pedidos asignados</h2><button type="button" id="refresh-button" class="outline">Actualizar</button></div>
+ <p id="app-status" role="status" class="status">Consultando asignaciones…</p><section id="orders-list" class="orders-list" aria-live="polite"></section>
+ </main>
+ <nav class="bottom-nav" aria-label="Navegación"><button type="button" id="show-active" class="active">En camino</button><button type="button" id="show-all">Todos mis pedidos</button></nav>
+</div>
+<div id="proof-modal" class="modal" hidden><div class="modal-body"><button type="button" class="close" id="proof-close">Cerrar ×</button><p class="eyebrow">COMPROBANTE DE ENTREGA</p><h2 id="proof-title">Confirmar pedido</h2><p id="proof-client" class="hint"></p>
+ <form id="proof-form"><section id="photo-step"><label class="photo-field">1. Fotografía de la entrega<input id="delivery-photo" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" required></label><p class="hint">Toma o adjunta una fotografía clara de la entrega realizada.</p><img id="photo-preview" alt="Vista previa de la entrega" hidden><button type="button" id="photo-next" class="primary wide" disabled>Continuar a la firma</button></section>
+ <section id="signature-step" hidden><h3>2. Firma del cliente</h3><p class="hint">El cliente puede firmar con su dedo o con un lápiz táctil.</p><div class="signature-box"><canvas id="signature-canvas" aria-label="Área para dibujar la firma del cliente"></canvas></div><div class="signature-actions"><button type="button" id="signature-clear" class="outline">Borrar firma</button><button type="submit" id="proof-submit" class="primary">Confirmar entrega</button></div><p class="hint">Al confirmar, el pedido pasa a ENTREGADO y se registra su evidencia.</p></section></form>
+ <p id="proof-error" class="message" role="alert" hidden></p></div></div>
+<div id="preview-modal" class="modal" hidden><div class="modal-body"><button type="button" id="preview-close" class="close">Cerrar ×</button><h2>Comprobante de entrega</h2><p class="hint">Foto y firma guardadas de forma privada.</p><h3>Fotografía</h3><img id="delivery-signed-photo" alt="Fotografía de entrega"><h3>Firma</h3><img id="delivery-signed-signature" alt="Firma del cliente"></div></div>
+<div id="install-info" class="modal" hidden><div class="modal-body install-info"><button type="button" id="install-info-close" class="close">Cerrar ×</button><h2>Instalar CUPISSA Domiciliarios</h2><p id="install-guidance" class="hint"></p><button type="button" class="primary wide" id="install-info-done">Entendido</button></div></div></body></html>
