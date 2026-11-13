@@ -242,11 +242,51 @@ Deno.serve(async req=>{
         return {id:o.id,numero:o.numero_pedido||o.codigo||String(o.id),estado:o.estado,fecha_entrega:o.fecha_entrega,
           nombre_cliente:[c.nombres,c.apellidos].filter(Boolean).join(' ')||o.cliente_nombre||'Cliente CUPISSA',
           telefono:o.telefono||o.contacto||c.telefono||'',direccion:o.direccion||c.direccion||'',barrio:o.barrio||c.barrio||'',ciudad:o.ciudad||c.ciudad||'',
-          ubicacion:o.ubicacion||'',nota:o.nota||'',productos:o.productos||[],imagenes:o.imagenes||[],
+          ubicacion:o.ubicacion??c.ubicacion??'',
+          // Entregar al navegador las coordenadas explícitas del pedido o del registro del cliente.
+          latitud:o.latitud??o.latitude??o.lat??c.latitud??c.latitude??c.lat??null,
+          longitud:o.longitud??o.longitude??o.lng??o.lon??c.longitud??c.longitude??c.lng??c.lon??null,
+          entrega_latitud:o.entrega_latitud??null,entrega_longitud:o.entrega_longitud??null,
+          ubicacion_latitud:o.ubicacion_latitud??null,ubicacion_longitud:o.ubicacion_longitud??null,
+          nota:o.nota||'',productos:o.productos||[],imagenes:o.imagenes||[],
           total:o.total||0,envio:o.envio??o.domicilio_envio??o.domicilio??0,anticipo:o.anticipo||0,entregado_en:a?.entregado_en||null,
           asignado_en:a?.asignado_en||null};
       }).sort((a:any,b:any)=>String(a.entregado_en||'').localeCompare(String(b.entregado_en||''))||String(a.fecha_entrega||'').localeCompare(String(b.fecha_entrega||'')));
       return out({ok:true,courier,orders:rows});
+    }
+
+    if(action==='courier_location') {
+      const courier=await getCourier(user.id);
+      const orderId=validId(body.pedido_id);
+      const lat=Number(body.latitud),lon=Number(body.longitud),accuracy=Number(body.precision_m);
+      if(!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)
+        throw new CupissaEdgeError('INVALID_GPS','Las coordenadas GPS no son válidas.',422);
+      const {data:assignment,error:assignmentError}=await admin.from('cupissa_domicilios')
+        .select('pedido_id,domiciliario_id,entregado_en').eq('pedido_id',orderId).maybeSingle();
+      if(assignmentError)throw assignmentError;
+      if(!assignment||assignment.domiciliario_id!==user.id||assignment.entregado_en)
+        throw new CupissaEdgeError('ASSIGNMENT_INVALID','Este pedido no está asignado a tu cuenta o ya fue entregado.',403);
+      const {error}=await admin.from('cupissa_domiciliarios_ubicaciones').upsert({
+        domiciliario_id:user.id,pedido_id:orderId,latitud:lat,longitud:lon,
+        precision_m:Number.isFinite(accuracy)?accuracy:null,
+        rumbo:Number.isFinite(Number(body.rumbo))?Number(body.rumbo):null,
+        velocidad:Number.isFinite(Number(body.velocidad))?Number(body.velocidad):null,
+        actualizado_en:body.registrado_en||new Date().toISOString(),estado:'EN_RUTA'
+      },{onConflict:'domiciliario_id,pedido_id'});
+      if(error)throw new CupissaEdgeError('GPS_SAVE_FAILED',
+        `No se pudo guardar la ubicación para gestión: ${error.message}. Ejecuta el SQL de navegación incluido en el ZIP.`,500);
+      return out({ok:true,guardado:true});
+    }
+    if(action==='admin_courier_locations') {
+      if(!isAdmin)throw new CupissaEdgeError('ADMIN_NOT_AUTHORIZED','Solo el administrador puede consultar ubicaciones.',403);
+      const {data,error}=await admin.from('cupissa_domiciliarios_ubicaciones')
+        .select('domiciliario_id,pedido_id,latitud,longitud,precision_m,rumbo,velocidad,actualizado_en,estado,entrega_latitud,entrega_longitud,entrega_precision_m,entregado_gps_en')
+        .order('actualizado_en',{ascending:false}).limit(300);
+      if(error)throw error;
+      const ids=[...new Set((data||[]).map((x:any)=>x.domiciliario_id))];
+      const {data:couriers}=ids.length?await admin.from('cupissa_domiciliarios').select('id,nombres,apellidos,telefono').in('id',ids):{data:[]};
+      const ubicaciones=(data||[]).map((x:any)=>({...x,domiciliario:(couriers||[]).find((c:any)=>c.id===x.domiciliario_id)||null}));
+      return out({ok:true,ubicaciones});
     }
     if(action==='complete_delivery') {
       await getCourier(user.id);
@@ -258,9 +298,23 @@ Deno.serve(async req=>{
       const {data:order,error:orderError}=await admin.from('pedidos_web').select('*').eq('id',orderId).maybeSingle();
       if(orderError||!order) throw new Error('Pedido no encontrado.');
       if(text(order.estado).toUpperCase()!=='EN CAMINO') return fail('El pedido no está EN CAMINO.',409);
+      const gpsLat=Number(body.latitud),gpsLon=Number(body.longitud);
+      if(!Number.isFinite(gpsLat)||!Number.isFinite(gpsLon)||Math.abs(gpsLat)>90||Math.abs(gpsLon)>180)
+        throw new CupissaEdgeError('GPS_REQUIRED','No se puede confirmar la entrega sin coordenadas GPS válidas.',422);
       const paths=await imagesFromPayload(body.foto,body.firma,user.id,orderId);
       const {data:success,error:rpcError}=await scoped.rpc('cupissa_domicilios_confirmar_entrega', {p_pedido_id:orderId,p_foto_path:paths[0],p_firma_path:paths[1]});
       if(rpcError||success!==true){ await admin.storage.from('cupissa-entregas').remove(paths);throw new Error(rpcError?.message||'No se confirmó la entrega.'); }
+      const finalLat=Number(body.latitud),finalLon=Number(body.longitud);
+      if(Number.isFinite(finalLat)&&Number.isFinite(finalLon)&&Math.abs(finalLat)<=90&&Math.abs(finalLon)<=180){
+        const {error:gpsError}=await admin.from('cupissa_domiciliarios_ubicaciones').upsert({
+          domiciliario_id:user.id,pedido_id:orderId,latitud:finalLat,longitud:finalLon,
+          precision_m:Number.isFinite(Number(body.precision_m))?Number(body.precision_m):null,
+          actualizado_en:new Date().toISOString(),estado:'ENTREGADO',
+          entrega_latitud:finalLat,entrega_longitud:finalLon,entrega_precision_m:Number.isFinite(Number(body.precision_m))?Number(body.precision_m):null,
+          entregado_gps_en:new Date().toISOString()
+        },{onConflict:'domiciliario_id,pedido_id'});
+        if(gpsError)console.error('[CUPISSA GPS] Entrega confirmada, pero no se guardó ubicación final:',gpsError.message);
+      }
       let emailResult:any={ok:false,warning:'No se confirmó el correo de entrega'};
       try {emailResult=await deliveryEmail(order);}catch(error){console.error('[CUPISSA] correo de entrega:',error);emailResult={ok:false,warning:'Entrega registrada; no se pudo enviar el correo. Revisa el mailer.'};}
       return out({ok:true,entregado:true,correo:emailResult});
