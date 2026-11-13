@@ -37,3 +37,49 @@ button:active:not(:disabled){transform:scale(.985)}
 }
 @media(max-width:370px){.brand-header strong{font-size:12px}.install-app{font-size:10px;padding:9px 8px}.ghost{padding:9px 10px}.order-details{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){button{transition:none}}
+
+/* Navegación GPS CUPISSA: pantalla completa estilo navegación giro a giro */
+.navigation-screen{position:fixed;inset:0;z-index:60;background:#071b2b;color:#fff;overflow:hidden}
+.navigation-screen[hidden]{display:none}
+.delivery-map{position:absolute;inset:0;width:100%;height:100%;min-height:100%;background:#e8edf0;overflow:hidden;touch-action:pan-x pan-y}
+.delivery-map .maplibregl-canvas-container,.delivery-map canvas{width:100%;height:100%;}
+.delivery-map .maplibregl-canvas{display:block;}
+.delivery-map .maplibregl-canvas{outline:0}
+.delivery-map .maplibregl-ctrl-attrib{font-size:9px;background:#ffffffd9;color:#243746}
+.delivery-map .maplibregl-ctrl-bottom-right{bottom:210px;right:10px}
+.delivery-map .maplibregl-ctrl-group{border-radius:14px;overflow:hidden}
+.nav-top-card{position:absolute;top:max(10px,env(safe-area-inset-top));left:10px;right:10px;min-height:66px;border-radius:15px;background:#006b56;color:#fff;display:flex;align-items:center;gap:12px;padding:10px 12px;box-shadow:0 5px 22px #0005;z-index:3}
+.nav-turn-icon{width:42px;height:42px;border-radius:50%;background:#fff;color:#087d68;display:grid;place-items:center;font-size:29px;font-weight:900;flex:none}
+.nav-turn-copy{min-width:0;flex:1}.nav-turn-copy strong{display:block;font-size:16px;line-height:1.2}.nav-turn-copy small{display:block;font-size:11px;opacity:.85;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-round{width:38px;height:38px;border:0;border-radius:50%;background:#ffffff20;color:#fff;font-size:26px;flex:none}
+.nav-bottom-card{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:14px 15px calc(14px + env(safe-area-inset-bottom));background:#080b0e;color:#fff;border-radius:19px 19px 0 0;box-shadow:0 -8px 30px #0005}
+.nav-destination{display:flex;align-items:center;gap:10px;padding:1px 0 12px;border-bottom:1px solid #ffffff20}
+.nav-dot{width:11px;height:11px;background:#f34a99;border:3px solid #fff;border-radius:50%;flex:none}
+.nav-destination small,.nav-stats small{display:block;color:#a9b4bd;font-size:9px;font-weight:800;letter-spacing:.08em}
+.nav-destination strong{display:block;font-size:12px;max-width:85vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:3px}
+.nav-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:13px 0 8px}
+.nav-stats>div{text-align:center;border-right:1px solid #ffffff1c}.nav-stats>div:last-child{border:0}
+.nav-stats strong{display:block;font-size:20px;font-weight:850;letter-spacing:-.04em;margin-bottom:2px}
+.nav-status{font-size:10px;color:#9fabb5;min-height:15px;text-align:center;margin:2px 0 10px}
+.nav-actions{display:grid;grid-template-columns:.8fr 1.5fr;gap:9px}
+.nav-actions button{min-height:47px;border:0;border-radius:12px;font-size:11px;font-weight:850;padding:8px}
+.nav-secondary{background:#222a31;color:#fff}.nav-confirm{background:#e62983;color:#fff}.nav-confirm:disabled{background:#4a4650;color:#bdb8c0;opacity:1}
+body.navigation-open{overflow:hidden}
+@media(min-width:700px){.nav-top-card{left:22px;right:auto;width:min(440px,calc(100% - 44px))}.nav-bottom-card{left:auto;right:20px;bottom:20px;width:390px;border-radius:19px}.delivery-map .maplibregl-ctrl-bottom-right{bottom:20px}}
+
+.gps-arrow-marker{width:34px;height:34px;border-radius:50%;background:#087be5;border:3px solid #fff;box-shadow:0 2px 12px #0008;display:grid;place-items:center;color:#fff;font-size:21px;line-height:1}.gps-arrow-marker span{transform:translateY(-1px);text-shadow:0 1px 3px #00345d}
+
+/* Buscador de destino CUPISSA */
+.nav-search-panel{position:absolute;z-index:4;top:90px;left:12px;right:12px;max-width:560px;margin:auto;color:#17212a}
+.nav-search-row{display:flex;align-items:center;gap:8px;background:#fff;border-radius:14px;padding:7px 8px 7px 12px;box-shadow:0 4px 18px #0004;min-height:48px}
+.nav-search-row>span{font-size:25px;color:#64717b;line-height:1}
+.nav-search-row input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#15202a;font-size:13px;padding:7px 2px}
+.nav-search-row button{border:0;border-radius:10px;background:#006b56;color:#fff;font-size:11px;font-weight:850;padding:10px 13px;min-height:36px}
+.nav-search-results{margin-top:6px;background:#fff;border-radius:13px;box-shadow:0 8px 24px #0004;overflow:hidden;max-height:min(42dvh,310px);overflow-y:auto}
+.nav-search-result{display:block;width:100%;border:0;border-bottom:1px solid #edf0f2;background:#fff;text-align:left;padding:11px 13px;color:#17212a}
+.nav-search-result:last-child{border-bottom:0}.nav-search-result strong{display:block;font-size:12px;line-height:1.3}.nav-search-result small{display:block;color:#697780;font-size:10px;line-height:1.35;margin-top:3px}
+.nav-search-hint{display:block;margin:5px 5px 0;color:#fff;background:#071b2bbd;padding:4px 8px;border-radius:7px;font-size:9px;text-shadow:0 1px 2px #000}
+@media(min-width:700px){.nav-search-panel{left:22px;right:auto;top:98px;width:min(440px,calc(100% - 44px));margin:0}}
+
+/* CUPISSA | Estado de precisión de resultados del buscador */
+.nav-result-status{display:inline-block;margin-top:5px;padding:3px 7px;border-radius:6px;background:#e6f6ef;color:#087b58;font-size:9px;font-style:normal;font-weight:800}.nav-result-status.approx{background:#fff2d9;color:#8a5700}
