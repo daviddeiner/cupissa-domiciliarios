@@ -298,14 +298,11 @@ Deno.serve(async req=>{
       const {data:order,error:orderError}=await admin.from('pedidos_web').select('*').eq('id',orderId).maybeSingle();
       if(orderError||!order) throw new Error('Pedido no encontrado.');
       if(text(order.estado).toUpperCase()!=='EN CAMINO') return fail('El pedido no está EN CAMINO.',409);
-      const gpsLat=Number(body.latitud),gpsLon=Number(body.longitud);
-      if(!Number.isFinite(gpsLat)||!Number.isFinite(gpsLon)||Math.abs(gpsLat)>90||Math.abs(gpsLon)>180)
-        throw new CupissaEdgeError('GPS_REQUIRED','No se puede confirmar la entrega sin coordenadas GPS válidas.',422);
       const paths=await imagesFromPayload(body.foto,body.firma,user.id,orderId);
       const {data:success,error:rpcError}=await scoped.rpc('cupissa_domicilios_confirmar_entrega', {p_pedido_id:orderId,p_foto_path:paths[0],p_firma_path:paths[1]});
       if(rpcError||success!==true){ await admin.storage.from('cupissa-entregas').remove(paths);throw new Error(rpcError?.message||'No se confirmó la entrega.'); }
       const finalLat=Number(body.latitud),finalLon=Number(body.longitud);
-      if(Number.isFinite(finalLat)&&Number.isFinite(finalLon)&&Math.abs(finalLat)<=90&&Math.abs(finalLon)<=180){
+      if(body.latitud!=null&&body.longitud!=null&&Number.isFinite(finalLat)&&Number.isFinite(finalLon)&&Math.abs(finalLat)<=90&&Math.abs(finalLon)<=180){
         const {error:gpsError}=await admin.from('cupissa_domiciliarios_ubicaciones').upsert({
           domiciliario_id:user.id,pedido_id:orderId,latitud:finalLat,longitud:finalLon,
           precision_m:Number.isFinite(Number(body.precision_m))?Number(body.precision_m):null,
@@ -316,7 +313,28 @@ Deno.serve(async req=>{
         if(gpsError)console.error('[CUPISSA GPS] Entrega confirmada, pero no se guardó ubicación final:',gpsError.message);
       }
       let emailResult:any={ok:false,warning:'No se confirmó el correo de entrega'};
-      try {emailResult=await deliveryEmail(order);}catch(error){console.error('[CUPISSA] correo de entrega:',error);emailResult={ok:false,warning:'Entrega registrada; no se pudo enviar el correo. Revisa el mailer.'};}
+      try {
+        // Notificar mediante la misma función utilizada por el administrador.
+        const response=await fetch(`${url}/functions/v1/cupissa-pedido-entregado`,{
+          method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`,apikey:anon},
+          body:JSON.stringify({order_id:orderId})
+        });
+        const result=await response.json().catch(()=>({}));
+        emailResult=response.ok&&result.ok===true&&!result.skipped
+          ? {ok:true}
+          : {ok:false,warning:text(result.detail||result.reason||result.error||`Error HTTP ${response.status}`)};
+      }catch(error){
+        console.error('[CUPISSA] correo de entrega:',error);
+        emailResult={ok:false,warning:'Entrega registrada; no se pudo contactar la función de correo.'};
+      }
+      // Conserva la vía de correo existente como respaldo si la función central no confirma.
+      if(!emailResult.ok){
+        try {
+          const fallback=await deliveryEmail(order);
+          if(fallback.ok) emailResult=fallback;
+          else emailResult.warning=`${emailResult.warning}. Respaldo: ${fallback.warning||'no confirmado'}`;
+        }catch(error){console.error('[CUPISSA] respaldo correo entrega:',error);}
+      }
       return out({ok:true,entregado:true,correo:emailResult});
     }
     if(action==='view_delivery') {
