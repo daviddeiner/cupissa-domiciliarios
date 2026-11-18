@@ -176,11 +176,11 @@
   const coords=validCoords(row.lat,row.lon);if(!coords)return;
   const exact=rowIsExactForQuery(row,query);const hasNumber=!!requestedHouseNumber(query);
   navDestination=coords;navDestinationApproximate=hasNumber&&!exact;navReached=false;navRoute=null;navSteps=[];navStepIndex=0;navLastReroute=0;
-  $('nav-arrived').disabled=true;$('nav-destination-label').textContent=title;$('nav-instruction').textContent=navDestinationApproximate?'Número de inmueble sin verificar':'Destino seleccionado';
+  $('nav-destination-label').textContent=title;$('nav-instruction').textContent=navDestinationApproximate?'Número de inmueble sin verificar':'Destino seleccionado';
   $('nav-distance-next').textContent=navDestinationApproximate?'Se encontró la vía, pero no el número exacto':'Calculando ruta hasta '+title;
   updateDestinationMarker();updateRouteLayer();closeNavSearch();
   if(navMap?.loaded())navMap.easeTo({center:coords,zoom:16.5,pitch:42,duration:450});
-  if(navDestinationApproximate){navStatus('No se encontró el número exacto del inmueble. Esta ubicación corresponde a la vía, no a la puerta del cliente. Prueba otra escritura o busca un establecimiento cercano; no se habilitará la confirmación.');$('nav-search-hint').textContent='El número no está verificado en los datos cartográficos. No se calculará una ruta como si fuera la puerta exacta.';return;}
+  if(navDestinationApproximate){navStatus('No se encontró el número exacto del inmueble. Verifica la dirección con el cliente; puedes confirmar la entrega desde cualquier ubicación.');$('nav-search-hint').textContent='El número no está verificado en los datos cartográficos. No se calculará una ruta como si fuera la puerta exacta.';return;}
   navStatus('Destino seleccionado. Calculando ruta…');
   if(navPosition){try{await calculateRoute(true);}catch(e){navStatus(e.message);$('nav-search-hint').textContent='El lugar fue localizado, pero no se pudo calcular una ruta: '+e.message;}}
   else navStatus('Destino localizado. Esperando la ubicación GPS del domiciliario para calcular la ruta.');
@@ -204,7 +204,7 @@
   });
   navMap.on('click',async e=>{
     if(!navOrder)return;
-    navDestination=[e.lngLat.lng,e.lngLat.lat];navDestinationApproximate=false;navReached=false;$('nav-arrived').disabled=true;
+    navDestination=[e.lngLat.lng,e.lngLat.lat];navDestinationApproximate=false;navReached=false;
     updateDestinationMarker();$('nav-instruction').textContent='Destino marcado en el mapa';$('nav-distance-next').textContent='Calculando ruta hasta el punto seleccionado';
     navStatus('Destino seleccionado manualmente. Calculando ruta…');
     if(navPosition){try{await calculateRoute(true);}catch(err){navStatus(err.message);}}
@@ -228,9 +228,9 @@
   await persistCourierPosition(p);
   if(!navDestination){navStatus(`GPS activo · Precisión aproximada ${Math.round(p.coords.accuracy)} m · Marca el destino tocando el mapa.`);return;}
   const remaining=distanceMeters(navPosition,navDestination);
-  if(remaining<60&&!navDestinationApproximate){navReached=true;$('nav-arrived').disabled=false;navStatus('Estás en el destino. Verifica la dirección antes de confirmar.');if(navRoute){navRoute=null;navSteps=[];if(navMap?.getSource(routeSourceId))navMap.getSource(routeSourceId).setData({type:'Feature',geometry:{type:'LineString',coordinates:[]},properties:{}});}return;}
-  else if(navDestinationApproximate){navReached=false;$('nav-arrived').disabled=true;navStatus('El destino es aproximado. Toca la puerta o punto exacto del cliente en el mapa para habilitar la confirmación.');}
-  else {navReached=false;$('nav-arrived').disabled=true;navStatus(`GPS activo · Precisión aproximada ${Math.round(p.coords.accuracy)} m`);}
+  if(remaining<60&&!navDestinationApproximate){navReached=true;navStatus('Estás en el destino. Verifica la dirección antes de confirmar.');if(navRoute){navRoute=null;navSteps=[];if(navMap?.getSource(routeSourceId))navMap.getSource(routeSourceId).setData({type:'Feature',geometry:{type:'LineString',coordinates:[]},properties:{}});}return;}
+  else if(navDestinationApproximate){navReached=false;navStatus('El destino es aproximado. Verifica la dirección con el cliente; puedes confirmar en cualquier ubicación.');}
+  else {navReached=false;navStatus(`GPS activo · Precisión aproximada ${Math.round(p.coords.accuracy)} m`);}
   const nearestRouteDistance=navRoute?.coordinates?.length?Math.min(...navRoute.coordinates.filter((_,i)=>i%Math.max(1,Math.floor(navRoute.coordinates.length/80))===0).map(c=>distanceMeters(navPosition,c))):Infinity;
   if(!navDestinationApproximate&&(!navRoute||nearestRouteDistance>85)){try{await calculateRoute(!navRoute);}catch(e){navStatus(e.message);}}
   else updateInstruction();
@@ -239,7 +239,7 @@
  async function startNavigation(order){
   if(!window.maplibregl){alert('No se pudo cargar el motor del mapa. Comprueba tu conexión e inténtalo de nuevo.');return;}
   navOrder=order;navSearchAbort?.abort();$('nav-search-input').value='';closeNavSearch();$('nav-search-hint').textContent='Busca una dirección, barrio o establecimiento en el Atlántico.';navReached=false;navRoute=null;navSteps=[];navStepIndex=0;navLastReroute=0;navDestination=null;navDestinationApproximate=false;navPosition=null;navLastPersist=0;navLastPersistPosition=null;updateRouteLayer();updateDestinationMarker();
-  $('nav-destination-label').textContent=addressFor(order)||'Dirección pendiente';$('nav-arrived').disabled=true;
+  $('nav-destination-label').textContent=addressFor(order)||'Dirección pendiente';$('nav-arrived').disabled=false;
   $('nav-instruction').textContent='Buscando destino…';$('nav-distance-next').textContent='Preparando navegación';$('nav-turn-icon').textContent='↑';
   $('nav-eta').textContent='-- min';$('nav-distance').textContent='-- km';$('nav-arrival').textContent='--:--';
   show('navigation-screen',true);document.body.classList.add('navigation-open');
@@ -267,7 +267,7 @@
  $('nav-search-input').addEventListener('input',()=>{clearTimeout(navSearchTimer);const q=$('nav-search-input').value.trim();if(q.length>=4)navSearchTimer=setTimeout(runNavSearch,650);else closeNavSearch();});
  $('nav-close').addEventListener('click',stopNavigation);
  $('nav-recenter').addEventListener('click',()=>{if(navPosition&&navMap)navMap.easeTo({center:navPosition,zoom:17.5,bearing:navHeading,pitch:52,duration:500});});
- $('nav-arrived').addEventListener('click',()=>{if(!navOrder||!navPosition)return;const o=navOrder;stopNavigation();openProof(o);});
+ $('nav-arrived').addEventListener('click',()=>{if(!navOrder)return;const o=navOrder;stopNavigation();openProof(o);});
  window.addEventListener('pagehide',()=>{if(navWatch!==null)navigator.geolocation.clearWatch(navWatch);});
 
  const installed=()=>window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
@@ -387,8 +387,8 @@
   if(!confirm('¿Confirmar la entrega de este pedido con foto y firma?'))return;
   const btn=$('proof-submit');btn.disabled=true;btn.textContent='Confirmando…';message('proof-error','');
   try{
-   const signature=canvas.toDataURL('image/png');if(!navPosition){message('proof-error','No se puede confirmar sin una ubicación GPS capturada durante la navegación.');return;}
-   const result=await call('complete_delivery',{pedido_id:String(selected.id),foto:proofPhoto,firma:signature,latitud:navPosition[1],longitud:navPosition[0],precision_m:window.__cupissaLastAccuracy||null});
+   const signature=canvas.toDataURL('image/png');
+   const result=await call('complete_delivery',{pedido_id:String(selected.id),foto:proofPhoto,firma:signature,latitud:navPosition?.[1]??null,longitud:navPosition?.[0]??null,precision_m:navPosition?(window.__cupissaLastAccuracy||null):null});
    closeProof();await loadOrders();
    if(result.correo?.ok===false)alert('Pedido ENTREGADO correctamente. Aviso: '+(result.correo.warning||'El correo no pudo confirmarse.'));
    else alert('Entrega registrada: foto, firma y estado ENTREGADO sincronizados.');
