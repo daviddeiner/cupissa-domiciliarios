@@ -19,6 +19,6 @@ No hay SQL nuevo. No se modifican CUPISSA ADMIN ni CUPISSA CLIENTES.
    - En Supabase > SQL Editor ejecuta SQL_NAVEGACION_GPS.sql UNA SOLA VEZ.
    - En Supabase > Edge Functions > cupissa-domicilios, reemplaza el código por edge-functions/cupissa-domicilios/index.ts y despliega.
    - La posición se guarda en cupissa_domiciliarios_ubicaciones mientras el domiciliario navega. La vista cupissa_gestion_ubicaciones_domiciliarios queda disponible para que el panel administrativo consulte las ubicaciones y el punto GPS de entrega.
-   - La confirmación conserva el flujo actual de fotografía y firma. Se habilita desde la navegación al estar aproximadamente a 35 metros del destino; la coordenada capturada se guarda como punto GPS de entrega.
+   - La confirmación conserva el flujo actual de fotografía y firma. El botón permanece activo desde que se abre la navegación, independientemente de la distancia, del destino y de la disponibilidad del GPS. Si hay coordenadas disponibles, se guarda el punto GPS de entrega.
    - IMPORTANTE: los servicios públicos de teselas OSM, Nominatim y OSRM son servicios comunitarios con políticas y límites de uso. Para operación comercial de alto volumen conviene contratar/autoalojar teselas, geocodificación y enrutamiento. La ubicación GPS depende del dispositivo y puede tener errores; se muestra su precisión estimada.
    - El panel administrativo CUPISSA no está incluido en este ZIP. Los datos quedan almacenados y la vista SQL está creada para conectarla a Gestión > Domiciliarios.
