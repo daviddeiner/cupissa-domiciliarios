@@ -16,8 +16,18 @@ class CupissaEdgeError extends Error {
     super(message); this.name='CupissaEdgeError';
   }
 }
+const errorMessage = (value:unknown):string => {
+  if(value instanceof Error) return value.message;
+  if(value && typeof value==='object') {
+    const e=value as Record<string,unknown>;
+    const parts=[e.message,e.details,e.hint].filter(x=>typeof x==='string' && x.trim());
+    if(parts.length) return parts.join(' | ');
+    try {return JSON.stringify(value);} catch {return 'Error desconocido al consultar Supabase.';}
+  }
+  return String(value);
+};
 const fail = (error:unknown,status=400,code='OPERATION_FAILED') =>
-  out({ok:false,code,error:error instanceof Error?error.message:String(error)},status);
+  out({ok:false,code,error:errorMessage(error)},status);
 const digits = (value:unknown) => {
   let phone = String(value||'').replace(/\D/g,'');
   if(phone.startsWith('0057') && phone.length===14) phone=phone.slice(4);
@@ -230,7 +240,7 @@ Deno.serve(async req=>{
     if(action==='assign_pickup') {
       if(!isAdmin) return fail('Solo el administrador puede asignar recogidas.',403);
       const orderId=validId(body.pedido_id), courierId=text(body.domiciliario_id);
-      const {data:order,error:oe}=await admin.from('pedidos_web').select('id,estado,tipo_pedido,tipo_servicio,productos').eq('id',orderId).maybeSingle();
+      const {data:order,error:oe}=await admin.from('pedidos_web').select('*').eq('id',orderId).maybeSingle();
       if(oe)throw oe;
       if(!order || text(order.estado).toUpperCase()!=='ENTREGADO' || !isRental(order))return fail('Solo se pueden recoger alquileres ENTREGADOS.',409);
       const {data:courier,error:ce}=await admin.from('cupissa_domiciliarios').select('id,activo').eq('id',courierId).maybeSingle();
@@ -250,7 +260,7 @@ Deno.serve(async req=>{
       if(pe)throw pe;
       if(!pickup || pickup.domiciliario_id!==user.id)return fail('La recogida no está asignada a tu cuenta.',403);
       if(pickup.recogido_en)return fail('Este alquiler ya se recogió.',409);
-      const {data:order,error:oe}=await admin.from('pedidos_web').select('estado,tipo_pedido,tipo_servicio,productos').eq('id',orderId).maybeSingle();
+      const {data:order,error:oe}=await admin.from('pedidos_web').select('*').eq('id',orderId).maybeSingle();
       if(oe)throw oe;
       if(!order || text(order.estado).toUpperCase()!=='ENTREGADO' || !isRental(order))return fail('El pedido no corresponde a un alquiler entregado.',409);
       const {data:done,error}=await admin.from('cupissa_recogidas_alquiler').update({recogido_en:new Date().toISOString()}).eq('pedido_id',orderId).eq('domiciliario_id',user.id).is('recogido_en',null).select('pedido_id');
