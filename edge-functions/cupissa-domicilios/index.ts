@@ -31,6 +31,7 @@ const currency = (n:unknown) => new Intl.NumberFormat('es-CO',{style:'currency',
 const validId = (x:unknown) => { const s=text(x); if(!/^[a-zA-Z0-9_-]{1,128}$/.test(s)) throw new Error('Identificador inválido.'); return s; };
 const userClient = (token:string) => createClient(url, anon,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:`Bearer ${token}`}}});
 const adminEmail = () => text(env('CUPISSA_ADMIN_EMAIL')||'contacto@cupissa.com').toLowerCase();
+const isRental = (o:any) => ['ALQUILER'].includes(text(o?.tipo_pedido||o?.tipo_servicio).toUpperCase()) || (Array.isArray(o?.productos)&&o.productos.some((p:any)=>text(p?.modalidad).toUpperCase()==='ALQUILER'));
 const names = (c:any) => [c?.nombres,c?.apellidos].filter(Boolean).join(' ').trim() || 'Cliente CUPISSA';
 
 async function userFromRequest(req:Request) {
@@ -225,13 +226,49 @@ Deno.serve(async req=>{
       }
       return out({ok:true,domiciliario:{id:created.user.id,nombres:first,apellidos:last,telefono:phone}});
     }
+    // Recogidas separadas de las entregas; solo el admin puede asignar.
+    if(action==='assign_pickup') {
+      if(!isAdmin) return fail('Solo el administrador puede asignar recogidas.',403);
+      const orderId=validId(body.pedido_id), courierId=text(body.domiciliario_id);
+      const {data:order,error:oe}=await admin.from('pedidos_web').select('id,estado,tipo_pedido,tipo_servicio,productos').eq('id',orderId).maybeSingle();
+      if(oe)throw oe;
+      if(!order || text(order.estado).toUpperCase()!=='ENTREGADO' || !isRental(order))return fail('Solo se pueden recoger alquileres ENTREGADOS.',409);
+      const {data:courier,error:ce}=await admin.from('cupissa_domiciliarios').select('id,activo').eq('id',courierId).maybeSingle();
+      if(ce)throw ce;
+      if(!courier?.activo)return fail('Domiciliario inexistente o inactivo.',409);
+      const {data:existing,error:pe}=await admin.from('cupissa_recogidas_alquiler').select('recogido_en').eq('pedido_id',orderId).maybeSingle();
+      if(pe)throw pe;
+      if(existing?.recogido_en)return fail('Este alquiler ya fue recogido.',409);
+      const {error}=await admin.from('cupissa_recogidas_alquiler').upsert({pedido_id:orderId,domiciliario_id:courierId,asignado_en:new Date().toISOString()},{onConflict:'pedido_id'});
+      if(error)throw error;
+      return out({ok:true});
+    }
+    if(action==='complete_pickup') {
+      await getCourier(user.id);
+      const orderId=validId(body.pedido_id);
+      const {data:pickup,error:pe}=await admin.from('cupissa_recogidas_alquiler').select('*').eq('pedido_id',orderId).maybeSingle();
+      if(pe)throw pe;
+      if(!pickup || pickup.domiciliario_id!==user.id)return fail('La recogida no está asignada a tu cuenta.',403);
+      if(pickup.recogido_en)return fail('Este alquiler ya se recogió.',409);
+      const {data:order,error:oe}=await admin.from('pedidos_web').select('estado,tipo_pedido,tipo_servicio,productos').eq('id',orderId).maybeSingle();
+      if(oe)throw oe;
+      if(!order || text(order.estado).toUpperCase()!=='ENTREGADO' || !isRental(order))return fail('El pedido no corresponde a un alquiler entregado.',409);
+      const {data:done,error}=await admin.from('cupissa_recogidas_alquiler').update({recogido_en:new Date().toISOString()}).eq('pedido_id',orderId).eq('domiciliario_id',user.id).is('recogido_en',null).select('pedido_id');
+      if(error)throw error;
+      if(!done?.length)return fail('La recogida ya había sido confirmada.',409);
+      // No se solicita evidencia ni se actualiza pedidos_web.estado.
+      return out({ok:true,recogido:true});
+    }
     if(action==='courier_orders') {
       const courier=await getCourier(user.id);
       const {data:assignments,error}=await admin.from('cupissa_domicilios').select('pedido_id,asignado_en,entregado_en').eq('domiciliario_id',user.id).order('asignado_en',{ascending:false}).limit(150);
       if(error) throw error;
       const ids=(assignments||[]).map((a:any)=>a.pedido_id);
-      if(!ids.length) return out({ok:true,courier,orders:[]});
-      const {data:orders,error:orderError}=await admin.from('pedidos_web').select('*').in('id',ids);
+      const {data:pickups,error:pickupError}=await admin.from('cupissa_recogidas_alquiler').select('pedido_id,asignado_en,recogido_en').eq('domiciliario_id',user.id).is('recogido_en',null).limit(150);
+      if(pickupError)throw pickupError;
+      const pickupIds=(pickups||[]).map((a:any)=>a.pedido_id);
+      if(!ids.length&&!pickupIds.length) return out({ok:true,courier,orders:[]});
+      const {data:orders,error:orderError}=await admin.from('pedidos_web').select('*').in('id',[...new Set([...ids,...pickupIds])]);
       if(orderError) throw orderError;
       const clientsIds=[...new Set((orders||[]).flatMap((o:any)=>[o.cliente_web_id,o.cliente_id].filter(Boolean).map(String)))];
       let clients:any[]=[];
@@ -239,7 +276,8 @@ Deno.serve(async req=>{
       const rows=(orders||[]).map((o:any)=>{
         const a=(assignments||[]).find((d:any)=>String(d.pedido_id)===String(o.id));
         const c=clients.find((x:any)=>[o.cliente_web_id,o.cliente_id].filter(Boolean).map(String).includes(String(x.id)) || [o.cliente_web_id,o.cliente_id].filter(Boolean).map(String).includes(String(x.cliente_id)))||{};
-        return {id:o.id,numero:o.numero_pedido||o.codigo||String(o.id),estado:o.estado,fecha_entrega:o.fecha_entrega,
+        const pickup=(pickups||[]).find((p:any)=>String(p.pedido_id)===String(o.id));
+        return {tipo_operacion:pickup?'RECOGIDA':'ENTREGA',recogido_en:pickup?.recogido_en||null,id:o.id,numero:o.numero_pedido||o.codigo||String(o.id),estado:o.estado,fecha_entrega:o.fecha_entrega,
           nombre_cliente:[c.nombres,c.apellidos].filter(Boolean).join(' ')||o.cliente_nombre||'Cliente CUPISSA',
           telefono:o.telefono||o.contacto||c.telefono||'',direccion:o.direccion||c.direccion||'',barrio:o.barrio||c.barrio||'',ciudad:o.ciudad||c.ciudad||'',
           ubicacion:o.ubicacion??c.ubicacion??'',
@@ -298,6 +336,9 @@ Deno.serve(async req=>{
       const {data:order,error:orderError}=await admin.from('pedidos_web').select('*').eq('id',orderId).maybeSingle();
       if(orderError||!order) throw new Error('Pedido no encontrado.');
       if(text(order.estado).toUpperCase()!=='EN CAMINO') return fail('El pedido no está EN CAMINO.',409);
+      const gpsLat=Number(body.latitud),gpsLon=Number(body.longitud);
+      if(!Number.isFinite(gpsLat)||!Number.isFinite(gpsLon)||Math.abs(gpsLat)>90||Math.abs(gpsLon)>180)
+        throw new CupissaEdgeError('GPS_REQUIRED','No se puede confirmar la entrega sin coordenadas GPS válidas.',422);
       const paths=await imagesFromPayload(body.foto,body.firma,user.id,orderId);
       const {data:success,error:rpcError}=await scoped.rpc('cupissa_domicilios_confirmar_entrega', {p_pedido_id:orderId,p_foto_path:paths[0],p_firma_path:paths[1]});
       if(rpcError||success!==true){ await admin.storage.from('cupissa-entregas').remove(paths);throw new Error(rpcError?.message||'No se confirmó la entrega.'); }
