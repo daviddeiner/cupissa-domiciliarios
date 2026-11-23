@@ -335,19 +335,24 @@
   const first=items.find(p=>p.imagen_url||p.imagenes?.[0]);return first?.imagen_url||first?.imagenes?.[0]||o.imagenes?.[0]||'';
  }
  function render(){
-  const active=assigned.filter(o=>!o.entregado_en&&o.estado==='EN CAMINO'),delivered=assigned.filter(o=>o.entregado_en);
+  const active=assigned.filter(o=>o.tipo_operacion==='RECOGIDA'||(!o.entregado_en&&o.estado==='EN CAMINO')),delivered=assigned.filter(o=>o.tipo_operacion!=='RECOGIDA'&&o.entregado_en);
   $('pending-count').textContent=String(active.length);$('delivered-count').textContent=String(delivered.length);
   const list=filter==='active'?active:assigned;
   $('orders-list').innerHTML=list.map(o=>{
    const image=picture(o);const remaining=Math.max(0,Number(o.total||0)+Number(o.envio||0)-Number(o.anticipo||0));
    const items=Array.isArray(o.productos)?o.productos:[];
    const all=items.map(p=>`${esc(p.nombre||'Producto')} × ${esc(p.cantidad||1)}`).join(' · ');
-   return `<article class="order-card"><div class="order-top"><div class="thumb">${image?`<img src="${esc(image)}" loading="lazy" alt="Producto del pedido">`:'<span>📦</span>'}</div><div class="order-top-text"><strong>${esc(o.numero)}</strong><p>${esc(all||'Pedido CUPISSA')}</p><span class="chip ${o.entregado_en?'done':''}">${esc(o.entregado_en?'ENTREGADO':o.estado)}</span></div></div><div class="order-details"><div><small>CLIENTE</small><strong>${esc(o.nombre_cliente)}</strong></div><div><small>TELÉFONO</small><a href="tel:${esc(o.telefono||'')}">${esc(o.telefono||'—')}</a></div><div><small>DIRECCIÓN</small><strong>${esc([o.direccion,o.barrio,o.ciudad].filter(Boolean).join(', ')||o.ubicacion||'Verificar con cliente')}</strong></div><div><small>FECHA ENTREGA</small><strong>${esc(o.fecha_entrega||'Sin fecha')}</strong></div></div>${o.nota?`<p class="note">Nota: ${esc(o.nota)}</p>`:''}<div class="payment"><span>RESTANTE A COBRAR</span><strong>${money(remaining)}</strong></div><button type="button" data-order-id="${esc(o.id)}" class="primary wide">${o.entregado_en?'Ver comprobante':'Ver ruta de entrega'}</button></article>`;
+   return `<article class="order-card"><div class="order-top"><div class="thumb">${image?`<img src="${esc(image)}" loading="lazy" alt="Producto del pedido">`:'<span>📦</span>'}</div><div class="order-top-text"><strong>${esc(o.numero)}</strong><p>${esc(all||'Pedido CUPISSA')}</p><span class="chip ${o.entregado_en?'done':''}">${esc(o.tipo_operacion==='RECOGIDA'?'RECOGIDA':o.entregado_en?'ENTREGADO':o.estado)}</span></div></div><div class="order-details"><div><small>CLIENTE</small><strong>${esc(o.nombre_cliente)}</strong></div><div><small>TELÉFONO</small><a href="tel:${esc(o.telefono||'')}">${esc(o.telefono||'—')}</a></div><div><small>DIRECCIÓN</small><strong>${esc([o.direccion,o.barrio,o.ciudad].filter(Boolean).join(', ')||o.ubicacion||'Verificar con cliente')}</strong></div><div><small>FECHA ENTREGA</small><strong>${esc(o.fecha_entrega||'Sin fecha')}</strong></div></div>${o.nota?`<p class="note">Nota: ${esc(o.nota)}</p>`:''}${o.tipo_operacion==='RECOGIDA'?'':`<div class="payment"><span>RESTANTE A COBRAR</span><strong>${money(remaining)}</strong></div>`}<button type="button" data-order-id="${esc(o.id)}" class="primary wide">${o.tipo_operacion==='RECOGIDA'?'Marcar como RECOGIDO':o.entregado_en?'Ver comprobante':'Ver ruta de entrega'}</button></article>`;
   }).join('')||'<div class="empty"><strong>No hay entregas en esta lista.</strong><p>Cuando CUPISSA te asigne un pedido aparecerá aquí.</p></div>';
   $('orders-list').querySelectorAll('[data-order-id]').forEach(button=>button.addEventListener('click',()=>{
    const order=assigned.find(o=>String(o.id)===String(button.dataset.orderId));
-   if(!order)return;if(order.entregado_en)openDelivery(order.id);else startNavigation(order);
+   if(!order)return;if(order.tipo_operacion==='RECOGIDA')completePickup(order);else if(order.entregado_en)openDelivery(order.id);else startNavigation(order);
   }));
+ }
+ async function completePickup(order){
+   if(!confirm(`¿Confirmar que recogiste el alquiler ${order.numero}? No se requiere foto ni firma.`))return;
+   try{await call('complete_pickup',{pedido_id:String(order.id)});await loadOrders();alert('Recogida confirmada. El cliente seguirá viendo ENTREGADO.');}
+   catch(error){alert('No se pudo confirmar la recogida: '+error.message);}
  }
  function resetSignature(){
   const canvas=$('signature-canvas');const rect=canvas.getBoundingClientRect();
