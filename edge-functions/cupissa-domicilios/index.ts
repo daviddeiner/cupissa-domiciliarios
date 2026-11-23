@@ -336,9 +336,6 @@ Deno.serve(async req=>{
       const {data:order,error:orderError}=await admin.from('pedidos_web').select('*').eq('id',orderId).maybeSingle();
       if(orderError||!order) throw new Error('Pedido no encontrado.');
       if(text(order.estado).toUpperCase()!=='EN CAMINO') return fail('El pedido no está EN CAMINO.',409);
-      const gpsLat=Number(body.latitud),gpsLon=Number(body.longitud);
-      if(!Number.isFinite(gpsLat)||!Number.isFinite(gpsLon)||Math.abs(gpsLat)>90||Math.abs(gpsLon)>180)
-        throw new CupissaEdgeError('GPS_REQUIRED','No se puede confirmar la entrega sin coordenadas GPS válidas.',422);
       const paths=await imagesFromPayload(body.foto,body.firma,user.id,orderId);
       const {data:success,error:rpcError}=await scoped.rpc('cupissa_domicilios_confirmar_entrega', {p_pedido_id:orderId,p_foto_path:paths[0],p_firma_path:paths[1]});
       if(rpcError||success!==true){ await admin.storage.from('cupissa-entregas').remove(paths);throw new Error(rpcError?.message||'No se confirmó la entrega.'); }
