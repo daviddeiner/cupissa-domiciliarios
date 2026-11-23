@@ -1,0 +1,11 @@
+CUPISSA — CORRECCIÓN DEL ERROR HTTP 500 EN ASIGNACIÓN DE RECOGIDAS
+
+1. Reemplaza los archivos del repositorio correspondiente con los de este ZIP.
+2. Despliega de nuevo cupissa-domicilios/index.ts en Supabase Edge Functions.
+3. Comprueba que hayas ejecutado 04_RECOGIDAS_ALQUILER_20261123.sql en SQL Editor.
+4. Si vuelve a fallar, el aviso ya mostrará el error real de Supabase (por ejemplo, columna inexistente o tabla inexistente) en lugar de [object Object].
+5. Verifica el resultado con una recogida de prueba y revisa Edge Functions > cupissa-domicilios > Logs.
+
+Se conservan las entregas existentes, GPS opcional para confirmar entregas, firma/foto de entregas, correo, autenticación y permisos. Las recogidas no modifican pedidos_web.estado.
+
+Nota: No se pudo validar contra la base de datos de producción desde esta revisión.
