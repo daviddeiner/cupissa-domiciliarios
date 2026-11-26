@@ -1,6 +1,6 @@
 {
   "id": "./",
-  "name": "CUPISSA Domiciliarios",
+  "name": "Domicilios CUPISSA",
   "short_name": "Domicilios",
   "description": "Portal de entregas y comprobantes de CUPISSA",
   "start_url": "./",
@@ -10,16 +10,16 @@
   "theme_color": "#e62983",
   "icons": [
     {
-      "src": "assets/icon-192.png",
+      "src": "assets/icon-192.png?v=20261126-brand3",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "assets/icon-512.png",
+      "src": "assets/icon-512.png?v=20261126-brand3",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

@@ -66,11 +66,11 @@ async function verifyAdmin(){
  const {data,error}=await supabaseClient.auth.getUser();
  if(error || String(data?.user?.email||'').toLowerCase()!==String(window.CUPISSA_ADMIN_EMAIL||'').toLowerCase()) throw new Error('Acceso reservado al administrador autorizado.');
 }
-async function enterAdmin(){await verifyAdmin(); document.getElementById('private-content').classList.remove('hidden');document.getElementById('admin-login-screen').classList.add('hidden'); await startModule();}
+async function enterAdmin(authenticatedUser){if(authenticatedUser){if(String(authenticatedUser.email||'').toLowerCase()!==String(window.CUPISSA_ADMIN_EMAIL||'').toLowerCase())throw new Error('Acceso no autorizado.');}else await verifyAdmin(); document.getElementById('private-content').classList.remove('hidden');document.getElementById('admin-login-screen').classList.add('hidden'); void Promise.resolve().then(startModule).catch(e=>{console.warn(e);alert('No se pudo cargar el módulo: '+e.message);});}
 async function handleAdminLogin(e){ e.preventDefault();const button=e.target.querySelector('[type=submit]');const box=document.getElementById('admin-login-error');box.classList.add('hidden');button.disabled=true;try{
  const email=document.getElementById('admin-user-email').value.trim(); if(email.toLowerCase()!==String(window.CUPISSA_ADMIN_EMAIL).toLowerCase())throw new Error('Correo no autorizado.');
  if(!supabaseClient)throw new Error('No hay conexión con Supabase.');
- const {error}=await supabaseClient.auth.signInWithPassword({email,password:document.getElementById('admin-user-pass').value});if(error)throw error; await enterAdmin();
+ const {data,error}=await supabaseClient.auth.signInWithPassword({email,password:document.getElementById('admin-user-pass').value});if(error)throw error; if(!data?.user)throw new Error('No se recibió una sesión válida.'); await enterAdmin(data.user);
  }catch(error){box.querySelector('span').textContent=error.message||'No fue posible iniciar sesión.';box.classList.remove('hidden');}finally{button.disabled=false;}}
 async function handleAdminLogout(){try{await supabaseClient?.auth.signOut({scope:'local'});}finally{location.replace(LOGOUT_URL);}}
-window.addEventListener('load',async()=>{try{if(!supabaseClient){document.getElementById('admin-supabase-config-notice')?.classList.remove('hidden');return;}const {data}=await supabaseClient.auth.getSession();if(data?.session)await enterAdmin();}catch(e){console.warn(e.message);}});
+document.addEventListener('DOMContentLoaded',async()=>{try{if(!supabaseClient){document.getElementById('admin-supabase-config-notice')?.classList.remove('hidden');return;}const {data}=await supabaseClient.auth.getSession();if(data?.session)await enterAdmin();}catch(e){console.warn(e.message);}});

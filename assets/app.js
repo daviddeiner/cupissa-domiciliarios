@@ -236,8 +236,10 @@
   else updateInstruction();
 }
  function startGps(){if(!navigator.geolocation){navStatus('Este dispositivo no ofrece ubicación GPS.');return;}if(navWatch!==null)navigator.geolocation.clearWatch(navWatch);navWatch=navigator.geolocation.watchPosition(onGpsPosition,e=>navStatus(e.code===1?'Permite el acceso a la ubicación para CUPISSA.':e.code===2?'Activa la ubicación del celular.':'El GPS tardó demasiado. Inténtalo en un lugar abierto.'),{enableHighAccuracy:true,maximumAge:2000,timeout:20000});}
+ let mapLoading;
+ function ensureMapLibrary(){if(window.maplibregl)return Promise.resolve();if(mapLoading)return mapLoading;mapLoading=new Promise((resolve,reject)=>{if(!document.getElementById('map-css')){const css=document.createElement('link');css.id='map-css';css.rel='stylesheet';css.href='https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css';document.head.append(css);}const script=document.createElement('script');script.src='https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js';script.onload=resolve;script.onerror=()=>{script.remove();reject(new Error('No se pudo cargar el mapa. Intenta nuevamente.'));};document.head.append(script);}).catch(e=>{mapLoading=null;throw e;});return mapLoading;}
  async function startNavigation(order){
-  if(!window.maplibregl){alert('No se pudo cargar el motor del mapa. Comprueba tu conexión e inténtalo de nuevo.');return;}
+  try{await ensureMapLibrary();}catch(e){alert(e.message);return;}
   navOrder=order;navSearchAbort?.abort();$('nav-search-input').value='';closeNavSearch();$('nav-search-hint').textContent='Busca una dirección, barrio o establecimiento en el Atlántico.';navReached=false;navRoute=null;navSteps=[];navStepIndex=0;navLastReroute=0;navDestination=null;navDestinationApproximate=false;navPosition=null;navLastPersist=0;navLastPersistPosition=null;updateRouteLayer();updateDestinationMarker();
   $('nav-destination-label').textContent=addressFor(order)||'Dirección pendiente';$('nav-arrived').disabled=false;
   $('nav-instruction').textContent='Buscando destino…';$('nav-distance-next').textContent='Preparando navegación';$('nav-turn-icon').textContent='↑';
@@ -317,9 +319,9 @@
   try{
    const {data,error}=await db.auth.signInWithPassword({email:isAdmin?identity:`repartidor-${phone}@domiciliarios.cupissa.com`,password:event.currentTarget.password.value});
    if(error)throw error;
-   if(isAdmin){const {data:verified,error:verifyError}=await db.auth.getUser();if(verifyError||verified?.user?.email?.toLowerCase()!=='contacto@cupissa.com')throw new Error('Acceso administrativo no autorizado.');location.replace('./administracion/');return;}
+   if(isAdmin){if(data?.user?.email?.toLowerCase()!=='contacto@cupissa.com')throw new Error('Acceso administrativo no autorizado.');location.replace('./administracion/');return;}
    session=data.session;
-   await loadOrders();show('login-screen',false);show('app-screen',true);
+   btn.textContent='Cargando domicilios…';await loadOrders();show('login-screen',false);show('app-screen',true);
   }catch(error){await db.auth.signOut();message('login-error','No fue posible entrar. Verifica que CUPISSA te haya registrado y que el teléfono/contraseña coincidan. '+(error?.message||''));}
   finally{btn.disabled=false;btn.textContent='Entrar a mis domicilios';}
  });

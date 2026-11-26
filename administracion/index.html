@@ -9,12 +9,12 @@
     <meta name="theme-color" content="#111827">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="ADMIN">
-    <link rel="manifest" href="../manifest.webmanifest">
+    <link rel="manifest" href="../manifest.webmanifest?v=20261126-brand3">
     <title>Domicilios | CUPISSA</title>
     
-    <link rel="shortcut icon" href="favicon.png?v=20261115-transparent" type="image/png">
-    <link rel="icon" href="favicon.png?v=20261115-transparent" type="image/png">
-    <link rel="apple-touch-icon" href="admin-icon-192.png">
+    <link rel="shortcut icon" href="favicon.png?v=20261126-brand3" type="image/png">
+    <link rel="icon" href="favicon.png?v=20261126-brand3" type="image/png">
+    <link rel="apple-touch-icon" href="admin-icon-192.png?v=20261126-brand3">
     
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
@@ -72,7 +72,7 @@
         <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-pink-100">
             <div class="fuchsia-bg p-8 text-center text-white">
                 <div class="w-16 h-16 mx-auto mb-3 bg-white/20 backdrop-blur-md rounded-2xl p-3 flex items-center justify-center">
-                    <i class="fa-solid fa-shield-halved text-3xl text-white"></i>
+                    <img src="admin-icon-192.png?v=20261126-brand3" alt="" class="w-full h-full rounded-lg">
                 </div>
                 <h2 class="text-2xl font-black">Domicilios · Administración</h2>
                 <p class="text-pink-100 text-xs mt-1">Ingresa con tus credenciales de administrador</p>
@@ -119,7 +119,7 @@
         </div>
     </div>
 
-<div id="private-content" class="hidden"><header class="bg-white border-b border-pink-100 sticky top-0 z-40"><div class="max-w-7xl mx-auto px-4"><div class="flex justify-between items-center h-20 gap-2"><div><img src="logo.png" alt="CUPISSA" class="h-10 object-contain"><span class="text-xs font-bold text-pink-700">Administración de domicilios</span></div><div class="flex gap-2 items-center"><button onclick="handleAdminLogout()" class="rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold">Cerrar sesión</button></div></div></div></header><main class="max-w-7xl mx-auto p-4">        <section id="tab-section-domicilios" class="hidden space-y-5" aria-label="Administrar domicilios">
+<div id="private-content" class="hidden"><header class="bg-white border-b border-pink-100 sticky top-0 z-40"><div class="max-w-7xl mx-auto px-4"><div class="flex justify-between items-center h-20 gap-2"><div><img src="logo.png?v=20261126-brand3" alt="CUPISSA" class="h-10 object-contain"><span class="text-xs font-bold text-pink-700">Administración de domicilios</span></div><div class="flex gap-2 items-center"><button onclick="handleAdminLogout()" class="rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold">Cerrar sesión</button></div></div></div></header><main class="max-w-7xl mx-auto p-4">        <section id="tab-section-domicilios" class="hidden space-y-5" aria-label="Administrar domicilios">
             <div class="delivery-section-head"><div><p class="delivery-eyebrow">OPERACIONES · CUPISSA</p><h2><i class="fa-solid fa-motorcycle"></i> Domicilios</h2><p>Asigna los pedidos del departamento de despacho y consulta las entregas.</p></div><div class="flex flex-wrap gap-2"><button type="button" id="domicilios-refresh" class="delivery-admin-secondary"><i class="fa-solid fa-rotate"></i> Actualizar</button><button type="button" class="delivery-admin-primary" onclick="cupissaAbrirCrearDomiciliario()"><i class="fa-solid fa-user-plus"></i> Crear domiciliario</button></div></div>
             <form id="domiciliario-create-form" class="hidden delivery-create-form" onsubmit="cupissaCrearDomiciliario(event)"><h3>Nuevo domiciliario</h3><div class="delivery-create-grid"><label>Nombres<input name="nombres" required minlength="2" autocomplete="off" placeholder="Nombres"></label><label>Apellidos<input name="apellidos" required minlength="2" autocomplete="off" placeholder="Apellidos"></label><label>Celular<input name="telefono" required type="tel" inputmode="tel" placeholder="3001234567"></label><label>Contraseña asignada<input name="password" required type="password" minlength="10" autocomplete="new-password" placeholder="Mínimo 10 caracteres"></label></div><p class="text-xs text-slate-500">Las credenciales se crean exclusivamente para el portal del domiciliario, sin acceso a CUPISSA ADMIN.</p><button class="delivery-admin-primary" type="submit">Crear cuenta de domiciliario</button></form>
             <p id="domicilios-status" role="status" class="text-xs text-slate-600">Abre esta sección para consultar los despachos.</p>
@@ -129,6 +129,6 @@
 
 </main></div><script src="assets/js/00-config.js"></script>
 <script src="assets/js/admin-dialogs.js"></script>
-<script src="assets/js/auth.js"></script>
+<script src="assets/js/auth.js?v=20261126-fast3"></script>
 <script src="assets/js/admin-domicilios.js"></script>
 <script src="assets/js/start.js"></script></body></html>
