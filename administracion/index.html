@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="googlebot" content="noindex, nofollow, noarchive">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <script>try{if(localStorage.getItem('cupissa_admin_theme')==='dark')document.documentElement.classList.add('admin-dark')}catch(_){}</script>
+    <meta name="theme-color" content="#111827">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="ADMIN">
+    <link rel="manifest" href="../manifest.webmanifest">
+    <title>Domicilios | CUPISSA</title>
+    
+    <link rel="shortcut icon" href="favicon.png?v=20261115-transparent" type="image/png">
+    <link rel="icon" href="favicon.png?v=20261115-transparent" type="image/png">
+    <link rel="apple-touch-icon" href="admin-icon-192.png">
+    
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf4ff',
+                            100: '#fae8ff',
+                            200: '#f5d0fe',
+                            300: '#f0abfc',
+                            400: '#e879f9',
+                            500: '#db2777',
+                            600: '#be185d',
+                            700: '#9d174d',
+                            800: '#831843',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Cropper.js (Librería de Recorte de Imagen) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+
+    <link rel="stylesheet" href="assets/css/admin-web.css?v=20261115-pedidos-completos-v1">
+    <link rel="stylesheet" href="assets/css/admin-enhancements.css?v=20261121-resenas-1">
+    <link rel="stylesheet" href="assets/css/admin-app-mobile.css?v=20261112-domicilios-2">
+    <link rel="stylesheet" href="assets/css/admin-theme.css?v=20261115-4">
+    <style>
+        .fuchsia-btn { background-color: #db2777; color: white; }
+        .fuchsia-btn:hover { background-color: #be185d; }
+        .fuchsia-bg { background-color: #db2777; }
+        .fuchsia-text { color: #db2777; }
+        .fuchsia-border { border-color: #db2777; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #f0abfc; border-radius: 9999px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">    <div id="admin-login-screen" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-pink-100">
+            <div class="fuchsia-bg p-8 text-center text-white">
+                <div class="w-16 h-16 mx-auto mb-3 bg-white/20 backdrop-blur-md rounded-2xl p-3 flex items-center justify-center">
+                    <i class="fa-solid fa-shield-halved text-3xl text-white"></i>
+                </div>
+                <h2 class="text-2xl font-black">Domicilios · Administración</h2>
+                <p class="text-pink-100 text-xs mt-1">Ingresa con tus credenciales de administrador</p>
+            </div>
+            
+            <form onsubmit="handleAdminLogin(event)" class="p-6 sm:p-8 space-y-5">
+                <div id="admin-login-error" class="hidden bg-pink-50 border border-pink-200 fuchsia-text text-xs p-3 rounded-xl flex items-center space-x-2 font-medium">
+                    <i class="fa-solid fa-circle-exclamation text-base"></i>
+                    <span>Usuario o contraseña de administrador incorrectos.</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Correo Electrónico</label>
+                    <input type="email" id="admin-user-email" required placeholder="contacto@cupissa.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm font-semibold">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Contraseña</label>
+                    <input type="password" id="admin-user-pass" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm font-semibold">
+                </div>
+
+                <button type="submit" class="w-full py-3.5 fuchsia-btn font-bold rounded-xl shadow-lg transition-all text-sm flex items-center justify-center space-x-2">
+                    <span>Acceder al Panel</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <div id="admin-supabase-config-notice" class="hidden rounded-xl border border-amber-200 bg-amber-50 p-3 text-left">
+                    <p class="text-[11px] leading-relaxed text-amber-900">La conexión con Supabase necesita una clave pública del proyecto. El correo y la contraseña de Authentication son datos distintos.</p>
+                    <button type="button" onclick="openSupabaseConfig()" class="mt-2 text-xs font-black text-pink-700 underline">Configurar conexión</button>
+                </div>
+                <button type="button" onclick="openSupabaseConfig()" class="w-full text-[10px] font-bold text-slate-500 hover:text-pink-700">Configurar / cambiar conexión de Supabase</button>
+            </form>
+            <div id="admin-supabase-config-panel" class="hidden border-t border-slate-100 bg-slate-50 p-5 text-left space-y-3">
+                <div class="flex items-center justify-between gap-3">
+                    <h3 class="text-sm font-black text-slate-800">Conexión de Supabase</h3>
+                    <button type="button" onclick="closeSupabaseConfig()" class="text-slate-400 hover:text-slate-700" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <p class="text-[10px] leading-relaxed text-slate-600">Copia la clave <strong>Publishable</strong> del proyecto CUPISSA. También se acepta la clave antigua <strong>anon</strong>. No uses <strong>Secret</strong> ni <strong>service_role</strong>.</p>
+                <label for="admin-supabase-public-key" class="block text-[10px] font-black uppercase text-slate-600">Clave pública publishable / anon</label>
+                <input id="admin-supabase-public-key" type="password" autocomplete="off" spellcheck="false" placeholder="sb_publishable_…" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-xs font-mono">
+                <p id="admin-supabase-config-error" class="hidden rounded-lg bg-rose-50 p-2 text-[10px] text-rose-700"></p>
+                <a href="https://supabase.com/dashboard/project/lkdxtesgwqoizobxaawp/settings/api-keys" target="_blank" rel="noopener noreferrer" class="inline-block text-[10px] font-bold text-pink-700 underline">Abrir claves API del proyecto CUPISSA</a>
+                <button type="button" onclick="saveSupabasePublicKey(event)" class="w-full rounded-xl fuchsia-btn px-4 py-3 text-xs font-black">Guardar conexión</button>
+            </div>
+        </div>
+    </div>
+
+<div id="private-content" class="hidden"><header class="bg-white border-b border-pink-100 sticky top-0 z-40"><div class="max-w-7xl mx-auto px-4"><div class="flex justify-between items-center h-20 gap-2"><div><img src="logo.png" alt="CUPISSA" class="h-10 object-contain"><span class="text-xs font-bold text-pink-700">Administración de domicilios</span></div><div class="flex gap-2 items-center"><button onclick="handleAdminLogout()" class="rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold">Cerrar sesión</button></div></div></div></header><main class="max-w-7xl mx-auto p-4">        <section id="tab-section-domicilios" class="hidden space-y-5" aria-label="Administrar domicilios">
+            <div class="delivery-section-head"><div><p class="delivery-eyebrow">OPERACIONES · CUPISSA</p><h2><i class="fa-solid fa-motorcycle"></i> Domicilios</h2><p>Asigna los pedidos del departamento de despacho y consulta las entregas.</p></div><div class="flex flex-wrap gap-2"><button type="button" id="domicilios-refresh" class="delivery-admin-secondary"><i class="fa-solid fa-rotate"></i> Actualizar</button><button type="button" class="delivery-admin-primary" onclick="cupissaAbrirCrearDomiciliario()"><i class="fa-solid fa-user-plus"></i> Crear domiciliario</button></div></div>
+            <form id="domiciliario-create-form" class="hidden delivery-create-form" onsubmit="cupissaCrearDomiciliario(event)"><h3>Nuevo domiciliario</h3><div class="delivery-create-grid"><label>Nombres<input name="nombres" required minlength="2" autocomplete="off" placeholder="Nombres"></label><label>Apellidos<input name="apellidos" required minlength="2" autocomplete="off" placeholder="Apellidos"></label><label>Celular<input name="telefono" required type="tel" inputmode="tel" placeholder="3001234567"></label><label>Contraseña asignada<input name="password" required type="password" minlength="10" autocomplete="new-password" placeholder="Mínimo 10 caracteres"></label></div><p class="text-xs text-slate-500">Las credenciales se crean exclusivamente para el portal del domiciliario, sin acceso a CUPISSA ADMIN.</p><button class="delivery-admin-primary" type="submit">Crear cuenta de domiciliario</button></form>
+            <p id="domicilios-status" role="status" class="text-xs text-slate-600">Abre esta sección para consultar los despachos.</p>
+            <div class="delivery-columns"><section class="delivery-content-panel"><h3><i class="fa-solid fa-box-open"></i> Por asignar</h3><div id="domicilios-pendientes" class="delivery-cards"><p class="text-sm text-slate-500">Cargando…</p></div></section><section class="delivery-content-panel"><h3><i class="fa-solid fa-route"></i> En camino</h3><div id="domicilios-en-camino" class="delivery-assigned"><p class="text-sm text-slate-500">Cargando…</p></div></section></div>
+            <section class="delivery-content-panel"><h3><i class="fa-solid fa-rotate-left"></i> Recogidas pendientes · alquileres entregados</h3><p class="text-xs text-slate-500 mb-3">Gestión interna: el cliente seguirá viendo ENTREGADO. No requiere fotografía ni firma.</p><div id="domicilios-recogidas" class="delivery-cards">Cargando…</div></section>
+        </section>
+
+</main></div><script src="assets/js/00-config.js"></script>
+<script src="assets/js/admin-dialogs.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/admin-domicilios.js"></script>
+<script src="assets/js/start.js"></script></body></html>

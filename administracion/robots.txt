@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+# El panel incluye noindex en su HTML. Google necesita poder leerlo.

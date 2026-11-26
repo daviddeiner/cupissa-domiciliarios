@@ -8,14 +8,14 @@
 <title>CUPISSA · Domiciliarios</title><link rel="stylesheet" href="assets/style.css?v=20261113smartsearch2">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml"><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="assets/icon-192.png">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script defer src="assets/config.js"></script><link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css"><script defer src="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script><script defer src="assets/app.js?v=20261123recogidas"></script>
+<script defer src="assets/config.js"></script><link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css"><script defer src="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script><script defer src="assets/app.js?v=20261126admin"></script>
 </head><body>
 <div id="login-screen" class="login-screen">
- <div class="login-card"><div class="brand-mark">C<span>•</span></div><p class="eyebrow">CUPISSA · LOGÍSTICA</p><h1>Portal de domicilios</h1><p class="hint">Acceso exclusivo para repartidores autorizados.</p>
-  <form id="login-form"><label>Teléfono celular<input name="phone" inputmode="tel" autocomplete="username" type="tel" required placeholder="300 123 4567"></label>
-   <label>Contraseña<input name="password" type="password" autocomplete="current-password" minlength="10" required placeholder="Tu contraseña de acceso"></label>
+ <div class="login-card"><div class="brand-mark">C<span>•</span></div><p class="eyebrow">CUPISSA · LOGÍSTICA</p><h1>Portal de domicilios</h1><p class="hint">Acceso para repartidores y administración autorizada.</p>
+  <form id="login-form"><label>Teléfono celular o correo administrativo<input name="phone" inputmode="text" autocomplete="username" type="text" required placeholder="300 123 4567 o correo"></label>
+   <label>Contraseña<input name="password" type="password" autocomplete="current-password" required placeholder="Tu contraseña de acceso"></label>
    <button class="primary wide" id="login-button" type="submit">Entrar a mis domicilios</button></form>
-  <p id="login-error" class="message" role="alert" hidden></p><button type="button" id="install-button-login" class="install-login">Instalar aplicación en este celular</button><p class="login-help">Tu usuario y contraseña son asignados por CUPISSA. No se puede acceder al panel administrativo desde este portal.</p>
+  <p id="login-error" class="message" role="alert" hidden></p><button type="button" id="install-button-login" class="install-login">Instalar aplicación en este celular</button><p class="login-help">Tu usuario y contraseña son asignados por CUPISSA. Si eres administrador, ingresa con el correo y contraseña del ADMIN para gestionar domicilios.</p>
  </div>
 </div>
 <div id="app-screen" hidden>

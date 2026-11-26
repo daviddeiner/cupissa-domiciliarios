@@ -1,0 +1,84 @@
+/* CUPISSA Studio 2026 | Diseño móvil de aplicación, selección múltiple y domicilios */
+.admin-bulk-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:.55rem;padding:.85rem 1rem;background:#fff8fc;border-bottom:1px solid #fbcfe8}
+.admin-bulk-toolbar button{font-size:11px;font-weight:850;padding:.62rem .8rem;border-radius:.7rem;min-height:38px}
+.admin-bulk-toggle{font-size:11px;font-weight:800;color:#831843;display:flex;align-items:center;gap:.55rem;cursor:pointer;min-height:38px}
+.admin-bulk-toggle input,.admin-product-select{width:19px;height:19px;accent-color:#db2777;cursor:pointer}
+.admin-bulk-toolbar strong{font-size:11px;color:#9d174d;white-space:nowrap}
+.admin-bulk-clear{background:#fff;border:1px solid #e2e8f0;color:#475569}
+.admin-bulk-delete{background:#be123c;color:#fff;box-shadow:0 3px 10px #be123c25}
+.admin-bulk-delete:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.admin-product-checkbox-wrap{display:grid;place-items:center;min-width:26px;align-self:stretch;cursor:pointer}
+.admin-product-row.is-selected{background:#fff1f8;box-shadow:inset 3px 0 #db2777}
+.admin-option-drop-target{flex-wrap:wrap;outline-offset:3px;position:relative;min-height:62px;border-style:dashed!important;cursor:default}
+.admin-option-drop-target:focus-visible,.admin-option-drop-target.is-dragging{outline:3px solid #ec4899;background:#fdf2f8!important}
+.admin-option-drop-hint{display:block;flex-basis:100%;font-size:9px;color:#9d174d;margin-left:1px}
+.admin-option-photo-edit{min-height:30px;white-space:nowrap}
+.delivery-section-head{background:linear-gradient(125deg,#181325,#34203a 70%,#642447);color:white;padding:1.6rem;border-radius:1.45rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;box-shadow:0 12px 35px #11182718}
+.delivery-section-head h2{font-size:1.35rem;font-weight:900;letter-spacing:-.03em}.delivery-section-head h2 i{color:#f9a8d4;margin-right:.5rem}
+.delivery-section-head p:not(.delivery-eyebrow){font-size:11px;color:#e2d6e4;margin-top:.4rem}
+.delivery-eyebrow{font-weight:900;letter-spacing:.13em;font-size:9px;color:#f9a8d4}
+.delivery-admin-primary,.delivery-admin-secondary{padding:.72rem 1.05rem;border-radius:.8rem;font-weight:850;font-size:11px;min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:.35rem}
+.delivery-admin-primary{background:#db2777;color:white}.delivery-admin-secondary{background:#fff;color:#312134}.delivery-admin-primary:disabled{opacity:.5;cursor:not-allowed}
+.delivery-create-form{background:#fff;padding:1.25rem;border:1px solid #fbcfe8;border-radius:1.25rem;display:grid;gap:.95rem}
+.delivery-create-form.hidden{display:none}.delivery-create-form h3{font-weight:900;color:#111827}
+.delivery-create-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}
+.delivery-create-grid label{display:flex;flex-direction:column;gap:.35rem;font-size:11px;font-weight:800;color:#334155}
+.delivery-create-grid input,.delivery-admin-select{width:100%;border-radius:.75rem;border:1px solid #e2e8f0;padding:.73rem;font-size:12px;background:white;min-width:0}
+.delivery-columns{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:1rem;align-items:start}
+.delivery-content-panel{min-width:0;background:white;border:1px solid #e2e8f0;border-radius:1.2rem;overflow:hidden}
+.delivery-content-panel>h3{font-size:12px;font-weight:900;border-bottom:1px solid #f1f5f9;padding:1rem;color:#1e293b}
+.delivery-content-panel>h3 i{color:#db2777;margin-right:.35rem}.delivery-cards,.delivery-assigned{display:grid;gap:.85rem;padding:.8rem}
+.delivery-admin-card{border:1px solid #f1d6e3;border-radius:1rem;padding:1rem;background:#fffdfd;min-width:0}
+.delivery-admin-photo{width:66px;height:77px;border-radius:.7rem;background:#fce7f3;flex:none;display:grid;place-items:center;color:#db2777;overflow:hidden}
+.delivery-admin-photo img{width:100%;height:100%;object-fit:cover}
+.delivery-admin-card select{flex:1}.delivery-assigned-row{border:1px solid #f1f5f9;background:#f8fafc;border-radius:.85rem;padding:.85rem;display:grid;gap:.25rem;font-size:11px}
+.delivery-proof-overlay{position:fixed;inset:0;background:#020617bb;display:grid;place-items:center;z-index:9999;padding:1rem;overflow-y:auto}
+.delivery-proof-card{width:min(100%,440px);max-height:90dvh;overflow-y:auto;background:white;border-radius:1.25rem;padding:1.2rem;box-shadow:0 25px 60px #0004}
+.delivery-proof-card h3{font-size:18px;font-weight:900}.delivery-proof-card img{display:block;object-fit:contain;background:#f8fafc;border-radius:.85rem;width:100%;max-height:280px;border:1px solid #e2e8f0}
+.delivery-proof-close{float:right;font-weight:900;font-size:12px;color:#be185d}
+.cupissa-admin-appnav,.cupissa-admin-more-menu{display:none}
+@media(max-width:767px){
+  html,body{min-height:100%;max-width:100%;overflow-x:hidden;background:#f7f6f9!important}
+  body{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+  body>header{border-bottom:1px solid #f1e7ee!important;box-shadow:0 4px 22px #0f172a0a!important;position:sticky;top:0;z-index:38}
+  body>header .max-w-7xl>div{min-height:64px!important;height:64px!important}
+  body>header img[alt="CUPISSA"]{height:31px!important}
+  .admin-install-button{display:none!important}
+  body>.sm\:hidden{display:none!important}
+  main.max-w-7xl{padding:13px 12px 25px!important;display:block}
+  main>section,main>div[id^="tab-section"]{min-width:0}
+  main h2{font-size:17px!important;line-height:1.3!important}
+  main .bg-white.rounded-3xl{border-radius:18px!important}
+  main .p-6{padding:16px!important}
+  .admin-client-subtabs{top:65px!important;padding:.6rem 0!important;z-index:26!important}
+  #admin-product-search-panel{top:66px!important;z-index:25!important}
+  .admin-product-row{gap:.55rem!important;padding:12px 9px!important;align-items:center!important}
+  .admin-product-thumb{width:49px!important;height:56px!important}
+  .admin-product-actions{gap:3px!important}
+  .admin-icon-action{width:32px!important;height:36px!important}
+  .admin-product-name{font-size:12px!important;max-width:none!important}
+  .admin-product-main{min-width:0;flex:1}
+  .admin-product-meta{font-size:9px;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  .admin-product-checkbox-wrap{min-width:26px!important}
+  .admin-bulk-toolbar{padding:.65rem!important;gap:.35rem!important}
+  .admin-bulk-toolbar #cupissa-bulk-delete{flex:1;min-width:110px}
+  #modal-product-form>div,#modal-cropper>div{width:100%!important;max-height:calc(100dvh - 25px)!important;overflow-y:auto!important;border-radius:1rem!important}
+  #modal-product-form{padding:6px!important}
+  .admin-product-filters{gap:.3rem}
+  #web-orders-tbody td,#web-clients-tbody td{padding:.55rem!important}
+  .admin-web-modal{padding:9px!important}
+  .admin-web-modal-card{width:100%!important;border-radius:18px!important;max-height:94dvh!important}
+  .delivery-columns,.delivery-create-grid{grid-template-columns:1fr!important}
+  .delivery-section-head{padding:1.2rem;border-radius:1.2rem;align-items:stretch}
+  .delivery-section-head>div:last-child{width:100%}.delivery-section-head button{flex:1}
+  .delivery-admin-card>div:last-child{flex-direction:column!important}
+  .cupissa-admin-appnav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;bottom:0;left:0;right:0;background:#ffffffee;backdrop-filter:blur(18px);border-top:1px solid #f4d9e8;z-index:46;padding:9px 4px calc(9px + env(safe-area-inset-bottom));box-shadow:0 -6px 30px #0f172a0e}
+  .cupissa-admin-appnav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:46px;color:#7b6e7b;font-size:9px;font-weight:850;position:relative}
+  .cupissa-admin-appnav button i{font-size:20px;line-height:1.15}.cupissa-admin-appnav button.is-active{color:#db2777}
+  .cupissa-admin-appnav button.is-active:before{content:'';position:absolute;top:-9px;width:36px;height:3px;border-radius:999px;background:#db2777}
+  .cupissa-admin-more-menu:not(.hidden){display:flex;position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));right:9px;z-index:47;flex-direction:column;gap:4px;padding:8px;background:white;border:1px solid #fbcfe8;border-radius:15px;box-shadow:0 12px 34px #11182726}
+  .cupissa-admin-more-menu button{text-align:left;min-width:170px;padding:13px;border-radius:10px;font-size:12px;font-weight:850;color:#334155}
+  .cupissa-admin-more-menu button:active{background:#fdf2f8}
+}
+
+.cupissa-accessory-drop-hint{margin-top:7px;color:#047857;font-weight:800;font-size:10px;line-height:1.45}

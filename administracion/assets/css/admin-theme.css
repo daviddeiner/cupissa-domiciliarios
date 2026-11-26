@@ -1,0 +1,120 @@
+/* CUPISSA Studio — tema editorial carbón/rosa, sin modificar el modo claro. */
+.admin-theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.42rem .7rem;border-radius:999px;border:1px solid #fbcfe8;background:#fff1f2;color:#9d174d;font-size:11px;font-weight:800;white-space:nowrap;cursor:pointer;transition:background .2s,color .2s}
+.admin-theme-toggle:hover{background:#fce7f3}
+#cupissa-admin-more-menu button.is-active{background:#fdf2f8;color:#db2777;font-weight:800}
+#tab-btn-domicilios.bg-pink-50,#tab-btn-notificaciones.bg-pink-50{background:#fdf2f8!important;color:#db2777!important}
+
+/* Negros neutros, carbón y acentos CUPISSA. */
+html.admin-dark{color-scheme:dark;background:#0e0e10!important}
+.admin-dark body{background:#0e0e10!important;color:#eee9ed!important}
+.admin-dark header{background:#18171a!important;border-color:#302c32!important;box-shadow:0 4px 26px #0005!important}
+.admin-dark main{color:#eee9ed}
+.admin-dark :is(.bg-white,.bg-slate-50,.bg-gray-50,.bg-slate-100,.bg-gray-100){background-color:#211e23!important}
+.admin-dark :is(.bg-pink-50,.bg-pink-100,.bg-rose-50,.bg-rose-100){background-color:#39242f!important}
+.admin-dark :is(.border-slate-100,.border-slate-200,.border-slate-300,.border-gray-100,.border-gray-200,.border-pink-100){border-color:#39323b!important}
+.admin-dark :is(.text-slate-900,.text-slate-800,.text-slate-700,.text-gray-900,.text-gray-800,.text-black){color:#f7f1f5!important}
+.admin-dark :is(.text-slate-600,.text-slate-500,.text-gray-600,.text-gray-500){color:#ccc1ca!important}
+.admin-dark :is(.text-slate-400,.text-gray-400){color:#b1a5ae!important}
+.admin-dark :is(.text-pink-700,.text-rose-700,.fuchsia-text){color:#ff91ba!important}
+.admin-dark :is(.fuchsia-btn,.delivery-admin-primary){background:#da447f!important;color:#fff!important}
+.admin-dark :is(.fuchsia-btn:hover,.delivery-admin-primary:hover){background:#c62d6c!important}
+
+/* Navegación uniforme. */
+.admin-dark header nav button:not(.bg-pink-50){color:#d5cbd2!important}
+.admin-dark :is(header nav button.bg-pink-50,[id^="tab-btn-"].bg-pink-50){background:#48273a!important;color:#ff9bc2!important;border-color:#97506d!important}
+.admin-dark :is(.admin-client-subtabs,.cupissa-admin-appnav,.cupissa-admin-more-menu){background:#18171a!important;border-color:#39323b!important}
+.admin-dark :is(.admin-client-subtab,.cupissa-admin-more-menu button){background:#252127!important;color:#d5cbd2!important;border-color:#39323b!important}
+.admin-dark :is(.admin-client-subtab.is-active,.cupissa-admin-more-menu button.is-active,.cupissa-admin-appnav button.is-active){background:#48273a!important;color:#ff9bc2!important;border-color:#97506d!important}
+.admin-dark .admin-install-button{background:#30212a!important;color:#ffe0eb!important;border:1px solid #73405a}
+.admin-dark .admin-theme-toggle{background:#30212a!important;color:#ffe0eb!important;border-color:#73405a}
+
+/* Tarjetas y componentes propios de cada módulo. */
+.admin-dark :is(.admin-web-modal-card,.admin-web-modal-content,.admin-product-row,.admin-order-product-row,.admin-new-client-panel,.admin-bulk-toolbar,.admin-publish-mode,.admin-icon-action,.admin-step-pane,.delivery-create-form,.delivery-content-panel,.delivery-admin-card,.delivery-assigned-row,.delivery-proof-card,.admin-web-client-picker,.admin-web-client-results){background-color:#211e23!important;color:#eee9ed!important;border-color:#39323b!important}
+.admin-dark :is(.admin-product-filters,.admin-product-filter,.admin-step-indicator,.admin-security-note,.admin-photo-preview,.admin-image-dropzone,.product-photo-dropzone){background-color:#29242b!important;color:#ddd0da!important;border-color:#51414c!important}
+.admin-dark :is(.admin-product-filter.is-active,.admin-publish-mode.is-active,.admin-step-indicator.is-active){background-color:#48273a!important;color:#ff9bc2!important;border-color:#97506d!important}
+.admin-dark :is(.admin-product-name,.admin-step-title,.delivery-create-form h3,.delivery-content-panel h3,.delivery-admin-card h3){color:#f7f1f5!important}
+.admin-dark :is(.admin-product-meta,.admin-step-caption,.delivery-create-grid label){color:#c8bcc6!important}
+.admin-dark :is(.admin-product-row:hover,.web-order-row:hover,.web-client-row:hover,.delivery-assigned-row:hover){background-color:#302832!important}
+.admin-dark .delivery-section-head{background:linear-gradient(125deg,#211a21,#402534 72%,#6b3050)!important;border:1px solid #75425c}
+.admin-dark :is(.delivery-admin-secondary,.delivery-proof-close){background:#342c34!important;color:#f7e8f0!important;border-color:#61465a!important}
+
+/* Formularios, tablas y avisos legibles. */
+.admin-dark :is(input,textarea,select){background-color:#161417!important;color:#f8f2f5!important;border-color:#5b4b55!important;accent-color:#ef6d9b}
+.admin-dark :is(input,textarea)::placeholder{color:#afa1ac!important}
+.admin-dark :is(input,textarea,select):focus{border-color:#f186ae!important;outline-color:#f186ae!important}
+.admin-dark :is(table,table tbody){background:#211e23!important;color:#f0eaf0!important}
+.admin-dark :is(table thead,table th){background:#2d272e!important;color:#ddd0da!important;border-color:#483b46!important}
+.admin-dark table :is(td,tr){border-color:#39323b!important}
+.admin-dark table tbody tr:hover{background:#302832!important}
+.admin-dark :is(.bg-amber-50,.bg-yellow-50){background:#3b3025!important}
+.admin-dark :is(.text-amber-900,.text-amber-700,.text-yellow-800){color:#f8d6a2!important}
+.admin-dark :is(.bg-green-50,.bg-emerald-50){background:#1f392e!important}
+.admin-dark :is(.text-green-700,.text-emerald-700){color:#9fdfba!important}
+.admin-dark .bg-red-50{background:#40252d!important}
+.admin-dark :is(.text-red-700,.text-rose-700){color:#ffb7c4!important}
+.admin-dark #admin-login-screen{background:#0e0e10!important}
+.admin-dark #admin-login-screen .bg-white{background:#211e23!important}
+
+/* Ajustes comprobados contra Pedidos: las estadísticas NO quedan blancas. */
+.admin-dark .admin-order-kpi{background:#29252b!important;border:1px solid #463b46!important;box-shadow:none!important}
+.admin-dark .admin-order-kpi span{color:#d1c5cd!important}
+.admin-dark .admin-order-kpi strong{color:#fff5fb!important}
+.admin-dark .admin-order-kpi strong.admin-kpi-pink{color:#ff87b2!important}
+.admin-dark .admin-order-kpi strong.admin-kpi-yellow{color:#ffcf83!important}
+.admin-dark .admin-order-kpi strong.admin-kpi-green{color:#83dfb4!important}
+.admin-dark .admin-orders-filters{background:#29252b!important;border-color:#463b46!important;box-shadow:none!important}
+.admin-dark .admin-orders-filters label span,.admin-dark .admin-orders-filter-note{color:#d1c5cd!important}
+.admin-dark .admin-orders-filters :is(input,select){background:#171418!important;color:#f8f3f6!important;border-color:#635362!important;color-scheme:dark!important}
+.admin-dark .admin-orders-clear{background:#423741!important;color:#f9edf4!important}
+.admin-dark .admin-orders-table-container,.admin-dark .admin-orders-table-scroll,.admin-dark .admin-orders-table{background:#211e23!important}
+.admin-dark .admin-orders-table :is(.admin-web-table-cell,td,.admin-web-product-option-text){color:#eee5eb!important}
+.admin-dark .admin-orders-table td *:not(.fuchsia-text):not(.admin-order-status-caption):not(.admin-kpi-pink):not(button):not(select){color:#dfd4dc!important}
+.admin-dark .admin-orders-table td .fuchsia-text,.admin-dark .admin-order-status-caption{color:#ff91ba!important}
+.admin-dark .admin-orders-table tbody tr{background:#211e23!important}
+.admin-dark .admin-orders-table tbody tr:hover{background:#312a32!important}
+.admin-dark :is(.admin-web-status,.admin-web-button){background:#352936!important;color:#ffe6f0!important;border-color:#655163!important}
+
+/* Capturas de Clientes: estados informativos oscuros, jamás cajas grises translúcidas. */
+.admin-dark [aria-label="Revisión automática del cupo"]{background:#382632!important;border-color:#82516a!important}
+.admin-dark [aria-label="Revisión automática del cupo"] :is(h4,p){color:#f3e2eb!important}
+.admin-dark [aria-label="Revisión automática del cupo"] h4{color:#ffa3c6!important}
+.admin-dark #modal-edit-client section.bg-amber-50\/60{background:#3a3025!important;border-color:#a17a45!important}
+.admin-dark #modal-edit-client section.bg-amber-50\/60 :is(h4,p){color:#ffe2b1!important}
+.admin-dark #modal-edit-client section.bg-amber-50\/60 h4{color:#ffcc82!important}
+
+/* Capturas de Productos: paneles de publicación, radio y explicación legibles. */
+.admin-dark .product-publish-mode-panel{background:#292329!important;border:1px solid #744960!important;color:#f4eaf0!important}
+.admin-dark .product-publish-mode-panel p,.admin-dark .product-publish-mode-panel [data-publish-count]{color:#e6d4df!important}
+.admin-dark .admin-publish-mode,.admin-dark .admin-publish-mode:not(:disabled){background:#211d22!important;border-color:#685060!important;color:#f6edf2!important}
+.admin-dark .admin-publish-mode strong{color:#fff2f8!important}
+.admin-dark .admin-publish-mode small{color:#d7c4cf!important}
+.admin-dark .admin-publish-mode.is-active{background:#4a293a!important;border-color:#f186ae!important;color:#fff!important}
+.admin-dark .admin-publish-mode:disabled{background:#353036!important;border-color:#544952!important;opacity:.7}
+.admin-dark .admin-publish-mode:disabled strong{color:#e4dae0!important}
+.admin-dark .admin-publish-radio{border-color:#dacbd3!important}
+
+/* Captura de Notificaciones: la zona de arrastrar no debe verse gris opaco. */
+.admin-dark #cupissa-push-image-zone{background:#30232d!important;border-color:#a36385!important}
+.admin-dark #cupissa-push-image-zone :is(p,span){color:#f2dce9!important}
+.admin-dark #cupissa-push-image-input{background:transparent!important;color:#f5e8ef!important}
+.admin-dark #cupissa-push-image-input::file-selector-button{background:#513148;color:#fff0f7;border:1px solid #8b5873;border-radius:7px;padding:6px 10px;margin-right:10px}
+
+/* Búsquedas, ventanas y tarjetas extra no cubiertas por Tailwind. */
+.admin-dark :is(.admin-web-product-row,.admin-web-client-option,.admin-web-product-option,.admin-web-product-results,.admin-web-client-results,.admin-web-product-selected,.admin-image-option){background:#29242b!important;color:#f5eaf0!important;border-color:#52414d!important}
+.admin-dark :is(.admin-web-client-option:hover,.admin-web-product-option:hover){background:#3d2b38!important}
+.admin-dark :is(.admin-web-label,.admin-web-client-edit-grid label){color:#dbcbd5!important}
+.admin-dark .admin-web-client-option small,.admin-dark .admin-web-product-option-text small{color:#ff9bc2!important}
+
+/* Clientes web: las celdas usan un color fijo en admin-web.css. */
+.admin-dark #tab-section-web-clientes .admin-web-table-cell,
+.admin-dark #tab-section-web-clientes #web-clients-tbody td,
+.admin-dark #tab-section-web-clientes #web-clients-tbody td span{color:#f1e7ee!important}
+.admin-dark #tab-section-web-clientes #web-clients-tbody tr{background:#211e23!important}
+.admin-dark #tab-section-web-clientes #web-clients-tbody tr:hover{background:#332a33!important}
+.admin-dark #tab-section-web-clientes #web-clients-tbody td{border-color:#493c47!important}
+.admin-dark #tab-section-web-clientes #web-clients-tbody :is(button,.admin-web-button){background:#593247!important;color:#ffe8f1!important}
+.admin-dark #tab-section-web-clientes :is(h2,h3,th){color:#f6eaf0!important}
+
+/* Líneas de accesorios en el formulario de pedidos. */
+.admin-order-accessory-row{display:grid;grid-template-columns:minmax(0,2fr) minmax(105px,1fr) auto;gap:.55rem;align-items:center}
+@media(max-width:500px){.admin-order-accessory-row{grid-template-columns:minmax(0,1fr) 105px auto;gap:.35rem}}

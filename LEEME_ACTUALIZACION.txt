@@ -1,0 +1,2 @@
+DOMICILIARIOS CUPISSA
+Copia el contenido de este ZIP sobre tu repositorio actual sin borrar .git. Conserva el CNAME. El acceso por teléfono mantiene el flujo original; el correo autorizado del ADMIN abre administracion/ dentro del mismo sitio. Cerrar sesión regresa al inicio. Reutiliza el módulo de domicilios del ADMIN y sus RPC/Edge existentes. No ejecutar SQL nuevo si las funciones ya trabajan en ADMIN.

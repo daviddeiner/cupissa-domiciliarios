@@ -312,11 +312,12 @@
  }
  function checkConnectivity(){if(!navigator.onLine)message('app-status','Necesitas internet para consultar o confirmar domicilios.');}
  $('login-form').addEventListener('submit',async event=>{
-  event.preventDefault();let phone=tel(event.currentTarget.phone.value);if(!phone){message('login-error','Escribe un celular colombiano válido.');return;}
+  event.preventDefault();const identity=event.currentTarget.phone.value.trim();const isAdmin=identity.toLowerCase()==='contacto@cupissa.com';let phone=tel(identity);if(!isAdmin&&!phone){message('login-error','Escribe un celular colombiano válido o el correo administrativo autorizado.');return;}
   const btn=$('login-button');btn.disabled=true;btn.textContent='Verificando…';message('login-error','');
   try{
-   const {data,error}=await db.auth.signInWithPassword({email:`repartidor-${phone}@domiciliarios.cupissa.com`,password:event.currentTarget.password.value});
+   const {data,error}=await db.auth.signInWithPassword({email:isAdmin?identity:`repartidor-${phone}@domiciliarios.cupissa.com`,password:event.currentTarget.password.value});
    if(error)throw error;
+   if(isAdmin){const {data:verified,error:verifyError}=await db.auth.getUser();if(verifyError||verified?.user?.email?.toLowerCase()!=='contacto@cupissa.com')throw new Error('Acceso administrativo no autorizado.');location.replace('./administracion/');return;}
    session=data.session;
    await loadOrders();show('login-screen',false);show('app-screen',true);
   }catch(error){await db.auth.signOut();message('login-error','No fue posible entrar. Verifica que CUPISSA te haya registrado y que el teléfono/contraseña coincidan. '+(error?.message||''));}
@@ -407,6 +408,6 @@
  $('preview-close').onclick=()=>show('preview-modal',false);
  window.addEventListener('online',()=>{if(session)loadOrders().catch(()=>{});});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&session)loadOrders().catch(()=>{});});
- (async()=>{try{const {data}=await db.auth.getSession();if(!data?.session)return;session=data.session;await loadOrders();show('login-screen',false);show('app-screen',true);}
+ (async()=>{try{const {data}=await db.auth.getSession();if(!data?.session)return;if(data.session.user?.email?.toLowerCase()==='contacto@cupissa.com'){location.replace('./administracion/');return;}session=data.session;await loadOrders();show('login-screen',false);show('app-screen',true);}
  catch(_){await db.auth.signOut();show('login-screen',true);show('app-screen',false);}})();
 })();

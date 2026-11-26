@@ -1,0 +1,121 @@
+#tab-section-web-clientes, #tab-section-web-pedidos { animation: adminWebFade .18s ease-out; }
+@keyframes adminWebFade { from { opacity:.45; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+.admin-web-active { background:#fdf2f8 !important; color:#be185d !important; border:1px solid #fbcfe8 !important; }
+.admin-web-table-cell { padding:13px 16px; vertical-align:middle; color:#334155; }
+.admin-web-status { min-width:195px; max-width:230px; padding:8px 10px; border:1px solid #e2e8f0; border-radius:10px; background:#fff; font-size:10px; font-weight:800; color:#334155; }
+.admin-web-button { padding:8px 11px; border-radius:10px; background:#fce7f3; color:#be185d; font-size:10px; font-weight:900; white-space:nowrap; }
+.admin-web-modal { position:fixed; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; padding:14px; background:rgba(15,23,42,.62); backdrop-filter:blur(4px); }
+.admin-web-modal.hidden { display:none !important; }
+.admin-web-modal-card { width:min(100%,850px); max-height:94vh; display:flex; flex-direction:column; overflow:hidden; border-radius:22px; background:#fff; box-shadow:0 22px 80px rgba(15,23,42,.35); }
+.admin-web-modal-content { overflow:auto; padding:18px; }
+.admin-web-label { display:block; margin-bottom:6px; color:#475569; font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.05em; }
+.admin-web-input { width:100%; padding:10px 11px; min-height:40px; border:1px solid #e2e8f0; border-radius:10px; outline:none; font-size:12px; font-weight:600; }
+.admin-web-input:focus { border-color:#ec4899; box-shadow:0 0 0 3px #fce7f3; }
+.admin-web-product-row { display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr 34px; gap:7px; padding:10px; border:1px solid #f1f5f9; border-radius:13px; background:#fcfcfd; }
+.admin-web-order-image { width:66px; height:66px; object-fit:cover; border-radius:10px; background:#f1f5f9; }
+@media (max-width:800px) { .admin-web-product-row { grid-template-columns:1fr 1fr; } .admin-web-product-row .wide { grid-column:1/-1; } .admin-web-modal { padding:0; } .admin-web-modal-card { width:100%; height:100%; max-height:100%; border-radius:0; } .admin-web-modal-content { padding:13px; } }
+@media (max-width:639px) {
+  header nav { flex-wrap:wrap; }
+  .sm\:hidden.bg-white.border-b { gap:5px; }
+  .sm\:hidden.bg-white.border-b button { font-size:9px; padding-left:3px; padding-right:3px; }
+}
+.admin-web-delete { width:32px; height:32px; flex:0 0 32px; display:inline-grid; place-items:center; border-radius:9px; background:#fff1f2; color:#e11d48; font-size:11px; transition:background .15s ease,color .15s ease; }
+.admin-web-delete:hover { background:#e11d48; color:#fff; }
+
+/* Pedidos: estado y botón Eliminar siempre juntos y visibles. */
+.admin-order-actions { display:flex; align-items:flex-end; gap:5px; min-width:0; }
+.admin-order-status-field { display:flex; flex:1; flex-direction:column; gap:4px; min-width:0; }
+.admin-order-status-caption { color:#be185d; font-size:9px; font-weight:850; line-height:1.25; overflow-wrap:anywhere; }
+.admin-order-status-field .admin-web-status { width:100%; min-width:0; max-width:100%; }
+
+/* En PC ancha las 13 columnas caben sin desplazamiento horizontal. */
+@media (min-width:1200px) {
+  body:has(#tab-section-web-pedidos:not(.hidden)) main.max-w-7xl {
+    max-width:100%;
+    padding-inline:clamp(12px,1.4vw,28px);
+  }
+  .admin-orders-table-scroll { overflow-x:visible; }
+  .admin-orders-table { min-width:0; width:100%; table-layout:fixed; font-size:clamp(9px,.72vw,11px); line-height:1.4; }
+  .admin-orders-table col:nth-child(1) { width:6%; }
+  .admin-orders-table col:nth-child(2) { width:11%; }
+  .admin-orders-table col:nth-child(3) { width:6%; }
+  .admin-orders-table col:nth-child(4) { width:7%; }
+  .admin-orders-table col:nth-child(5) { width:8%; }
+  .admin-orders-table col:nth-child(6) { width:7%; }
+  .admin-orders-table col:nth-child(7) { width:10%; }
+  .admin-orders-table col:nth-child(8) { width:7%; }
+  .admin-orders-table col:nth-child(9) { width:6%; }
+  .admin-orders-table col:nth-child(10) { width:7%; }
+  .admin-orders-table col:nth-child(11) { width:7%; }
+  .admin-orders-table col:nth-child(12) { width:7%; }
+  .admin-orders-table col:nth-child(13) { width:11%; }
+  .admin-orders-table thead th { padding:10px 4px; white-space:normal; overflow-wrap:anywhere; letter-spacing:0; }
+  .admin-orders-table .admin-web-table-cell { padding:10px 4px; overflow-wrap:anywhere; }
+  .admin-orders-table .admin-web-button { padding:6px 4px; font-size:9px; max-width:100%; }
+  .admin-orders-table .admin-web-status { height:30px; padding:5px 1px; font-size:9px; border-radius:7px; text-overflow:ellipsis; }
+  .admin-orders-table .admin-web-delete { width:27px; height:30px; flex:0 0 27px; border-radius:7px; }
+}
+
+/* En portátiles más estrechos: cada pedido muestra todos sus datos en una
+   tarjeta, sin recortar columnas ni obligar a desplazarse a los lados. */
+@media (min-width:768px) and (max-width:1199px) {
+  .admin-orders-table-scroll { overflow-x:hidden; }
+  .admin-orders-table { display:block; min-width:0; width:100%; }
+  .admin-orders-table colgroup,.admin-orders-table thead { display:none; }
+  .admin-orders-table tbody { display:grid; gap:12px; padding:12px; }
+  .admin-orders-table tbody tr { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px 14px; padding:14px; border:1px solid #e2e8f0; border-radius:14px; background:#fff; }
+  .admin-orders-table tbody td { display:block; min-width:0; padding:0; overflow-wrap:anywhere; font-size:11px; }
+  .admin-orders-table tbody td:not([colspan])::before { display:block; margin-bottom:3px; font-size:9px; font-weight:900; color:#64748b; text-transform:uppercase; }
+  .admin-orders-table tbody td:nth-child(1)::before { content:'Pedido'; }
+  .admin-orders-table tbody td:nth-child(2)::before { content:'Productos'; }
+  .admin-orders-table tbody td:nth-child(3)::before { content:'Venta / alquiler'; }
+  .admin-orders-table tbody td:nth-child(4)::before { content:'Fecha entrega'; }
+  .admin-orders-table tbody td:nth-child(5)::before { content:'Cliente'; }
+  .admin-orders-table tbody td:nth-child(6)::before { content:'Contacto'; }
+  .admin-orders-table tbody td:nth-child(7)::before { content:'Ubicación'; }
+  .admin-orders-table tbody td:nth-child(8)::before { content:'Total'; }
+  .admin-orders-table tbody td:nth-child(9)::before { content:'Envío'; }
+  .admin-orders-table tbody td:nth-child(10)::before { content:'Anticipo'; }
+  .admin-orders-table tbody td:nth-child(11)::before { content:'Restante'; }
+  .admin-orders-table tbody td:nth-child(12)::before { content:'Imágenes'; }
+  .admin-orders-table tbody td:nth-child(13) { grid-column:span 2; }
+  .admin-orders-table tbody td:nth-child(13)::before { content:'Estado / eliminar'; }
+  .admin-orders-table tbody td[colspan] { grid-column:1/-1; text-align:center; }
+  .admin-orders-table tbody td .admin-web-status { max-width:260px; }
+}
+@media (min-width:768px) and (max-width:850px) {
+  .admin-orders-table tbody tr { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+/* La vista móvil conserva su tabla desplazable original. */
+@media (max-width:767px) {
+  .admin-orders-table { min-width:1450px; }
+}
+
+/* Buscador de clientes del agendamiento */
+.admin-web-client-picker { position:relative; }
+.admin-web-client-results { position:relative; margin-top:5px; max-height:240px; overflow-y:auto; border:1px solid #fbcfe8; border-radius:12px; box-shadow:0 8px 20px rgba(80,20,50,.08); background:#fff; z-index:5; }
+.admin-web-client-results[hidden] { display:none !important; }
+.admin-web-client-option { display:flex; width:100%; align-items:center; justify-content:space-between; gap:12px; padding:11px 12px; border-bottom:1px solid #fce7f3; text-align:left; color:#334155; }
+.admin-web-client-option:hover,.admin-web-client-option:focus-visible { background:#fdf2f8; outline:none; }
+.admin-web-client-option strong { font-size:12px; font-weight:800; }
+.admin-web-client-option small { color:#be185d; font-size:10px; white-space:nowrap; }
+.admin-web-client-new { color:#be185d; font-size:12px; font-weight:900; }
+.admin-web-client-empty { padding:9px 12px; color:#64748b; font-size:11px; }
+
+
+/* CUPISSA | Selector de productos con miniaturas en agendamiento */
+.admin-web-product-picker { position:relative; min-width:0; }
+.admin-web-product-results { max-height:310px; overflow-y:auto; margin-top:5px; border:1px solid #fbcfe8; border-radius:14px; background:#fff; box-shadow:0 15px 32px rgba(70,22,52,.13); }
+.admin-web-product-results[hidden], .admin-web-product-selected[hidden] { display:none !important; }
+.admin-web-product-option { display:flex; align-items:center; gap:11px; width:100%; min-width:0; text-align:left; padding:9px 11px; border-bottom:1px solid #fce7f3; background:#fff; color:#334155; }
+button.admin-web-product-option:hover, button.admin-web-product-option:focus-visible { background:#fdf2f8; outline:2px solid #f9a8d4; outline-offset:-2px; }
+.admin-web-product-thumb, .admin-web-product-no-photo { width:52px; height:52px; flex:0 0 52px; border-radius:9px; object-fit:cover; background:#f8eaf1; }
+.admin-web-product-no-photo { display:flex; align-items:center; justify-content:center; color:#be185d; font-size:17px; }
+.admin-web-product-option-text { display:flex; flex:1; min-width:0; flex-direction:column; gap:4px; }
+.admin-web-product-option-text strong { font-size:12px; line-height:1.3; font-weight:800; white-space:normal; overflow-wrap:anywhere; }
+.admin-web-product-option-text small { font-size:11px; color:#be185d; font-weight:700; }
+.admin-web-product-selected { margin-top:6px; border:1px solid #fbcfe8; border-radius:12px; overflow:hidden; }
+.admin-web-product-selected .admin-web-product-option { background:#fff7fb; border:0; }
+.admin-web-product-check { color:#be185d; font-size:15px; }
+.admin-web-product-custom { color:#be185d; }
+.admin-web-product-empty { padding:10px 12px; font-size:11px; color:#64748b; }
